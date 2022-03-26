@@ -1,0 +1,32 @@
+server:
+  # RPA server host.
+  host: localhost
+  # RPA server port.
+  port: 10000
+  # RPA server path.
+  path: /rpa
+  # RPA server ssl.
+  ssl: False
+app:
+  # Maximum number of clients to allow in the pool.
+  size: 32
+  # Custom app paths.
+  path:
+    dingtalk:
+    lark:
+    qq:
+    tim:
+    wechat:
+    wecom:
+airtest:
+  # See Airtest Docs: https://airtest.doc.io.netease.com/
+  cvstrategy: [ tpl,sift,brisk ]
+  timeout: 5
+  timeout-tmp: 0.6
+logging:
+  # Logging level of root logger. (CRITICAL, ERROR, WARNING, INFO, DEBUG)
+  level: DEBUG
+  # Logging format.
+  format: '%(asctime)s %(levelname)-5s [%(process)d-%(thread)d-%(threadName)s] %(module)s#%(funcName)s : %(message)s'
+  # Specified a file and use it as the stream for logging.
+  filename: ./logs/rpa-client.log
