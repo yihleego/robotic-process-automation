@@ -45,12 +45,12 @@ class TaskStatus:
     UNSUPPORTED = 15
 
 
-class TaskMessageType:
-    TEXT = 0
-    IMAGE = 1
-    VIDEO = 2
-    FILE = 3
-    MENTION = 4
+class MessageType:
+    TEXT = 'text'
+    IMAGE = 'image'
+    VIDEO = 'video'
+    FILE = 'file'
+    MENTION = 'mention'
 
 
 class AppConfig:

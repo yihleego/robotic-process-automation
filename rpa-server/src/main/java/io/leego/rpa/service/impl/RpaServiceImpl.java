@@ -14,7 +14,6 @@ import io.leego.rpa.entity.User;
 import io.leego.rpa.enumeration.AppStatus;
 import io.leego.rpa.enumeration.ClientStatus;
 import io.leego.rpa.enumeration.ErrorCode;
-import io.leego.rpa.enumeration.TaskMessageType;
 import io.leego.rpa.enumeration.TaskStatus;
 import io.leego.rpa.enumeration.UserStatus;
 import io.leego.rpa.pojo.dto.AppQueryDTO;
@@ -107,6 +106,7 @@ public class RpaServiceImpl implements RpaService {
                     App app = new App(o.getName(), AppStatus.ENABLED.getCode());
                     if (StringUtils.hasText(o.getId())) {
                         app.setId(o.getId());
+                        app.makeUpdatable();
                     }
                     return app;
                 })
@@ -152,6 +152,7 @@ public class RpaServiceImpl implements RpaService {
                             o.getPhone(), o.getAvatar(), UserStatus.ENABLED.getCode());
                     if (StringUtils.hasText(o.getId())) {
                         user.setId(o.getId());
+                        user.makeUpdatable();
                     }
                     return user;
                 })
@@ -237,7 +238,6 @@ public class RpaServiceImpl implements RpaService {
                             task.setPriority(Integer.parseInt(priority));
                         }
                     }
-                    task.makeInsertable();
                     return task;
                 })
                 .collect(Collectors.toList());
@@ -320,7 +320,6 @@ public class RpaServiceImpl implements RpaService {
                 UserStatus.class.getSimpleName(), Option.of(UserStatus.values(), UserStatus::getCode, o -> messageConverter.convert(o.getName())),
                 TaskStatus.class.getSimpleName(), Option.of(TaskStatus.values(), TaskStatus::getCode, o -> messageConverter.convert(o.getName())),
                 ClientStatus.class.getSimpleName(), Option.of(ClientStatus.values(), ClientStatus::getCode, o -> messageConverter.convert(o.getName())),
-                TaskMessageType.class.getSimpleName(), Option.of(TaskMessageType.values(), TaskMessageType::getCode, o -> messageConverter.convert(o.getName())),
                 ErrorCode.class.getSimpleName(), Option.of(ErrorCode.values(), ErrorCode::getCode, o -> messageConverter.convert(o.getMessage()))));
     }
 

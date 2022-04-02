@@ -3,7 +3,7 @@ import unittest
 
 import win32gui
 
-from apps.app import TaskMessageType
+from apps.app import MessageType
 from apps.wechat import WeChat
 
 APP = WeChat
@@ -49,10 +49,10 @@ class WechatTestSuite(unittest.TestCase):
         client.send_private_messages({
             "target": "friend_name",
             "messages": [
-                {"type": TaskMessageType.TEXT, "content": "Hey, dude."},
-                {"type": TaskMessageType.IMAGE, "content": "https://www.xxxx.com/image.png"},
-                {"type": TaskMessageType.VIDEO, "content": "https://www.xxxx.com/video.mp4"},
-                {"type": TaskMessageType.FILE, "content": "https://www.xxxx.com/file.zip"},
+                {"type": MessageType.TEXT, "content": "Hey, dude."},
+                {"type": MessageType.IMAGE, "content": "https://www.xxxx.com/image.png"},
+                {"type": MessageType.VIDEO, "content": "https://www.xxxx.com/video.mp4"},
+                {"type": MessageType.FILE, "content": "https://www.xxxx.com/file.zip"},
             ]
         })
 
@@ -61,10 +61,10 @@ class WechatTestSuite(unittest.TestCase):
         client.send_group_messages({
             "target": "group_name",
             "messages": [
-                {"type": TaskMessageType.TEXT, "content": "Hey, guys."},
-                {"type": TaskMessageType.IMAGE, "content": "https://www.xxxx.com/image.png"},
-                {"type": TaskMessageType.VIDEO, "content": "https://www.xxxx.com/video.mp4"},
-                {"type": TaskMessageType.FILE, "content": "https://www.xxxx.com/file.zip"},
-                {"type": TaskMessageType.MENTION, "content": "member_name"},
+                {"type": MessageType.TEXT, "content": "Hey, guys."},
+                {"type": MessageType.IMAGE, "content": "https://www.xxxx.com/image.png"},
+                {"type": MessageType.VIDEO, "content": "https://www.xxxx.com/video.mp4"},
+                {"type": MessageType.FILE, "content": "https://www.xxxx.com/file.zip"},
+                {"type": MessageType.MENTION, "content": "member_name"},
             ]
         })

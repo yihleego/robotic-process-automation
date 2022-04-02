@@ -2,7 +2,7 @@
 insert into app(id, name, status, created_time)
 values ('wechat', '微信', 1, now()),
        ('wecom', '企业微信', 1, now()),
-       ('qq', 'QQ', 1, now()),
+       ('qq', '腾讯QQ', 1, now()),
        ('tim', 'TIM', 1, now()),
        ('dingtalk', '钉钉', 1, now()),
        ('lark', '飞书', 1, now());
@@ -19,6 +19,7 @@ values ('task_type:wechat', 'login', '0', 'Login', 0),
        ('task_type:wecom', 'logout', '1', 'Logout', 1),
        ('task_type:wecom', 'send_private_messages', '100', 'Send Private Messages', 2),
        ('task_type:wecom', 'send_group_messages', '100', 'Send Group Messages', 3),
+       ('task_type:wecom', 'add_contacts', '100', 'Add Contacts', 4),
 
        ('task_type:qq', 'login', '0', 'Login', 0),
        ('task_type:qq', 'logout', '1', 'Logout', 1),
@@ -38,5 +39,11 @@ values ('task_type:wechat', 'login', '0', 'Login', 0),
        ('task_type:lark', 'login', '0', 'Login', 0),
        ('task_type:lark', 'logout', '1', 'Logout', 1),
        ('task_type:lark', 'send_private_messages', '100', 'Send Private Messages', 2),
-       ('task_type:lark', 'send_group_messages', '100', 'Send Group Messages', 3);
+       ('task_type:lark', 'send_group_messages', '100', 'Send Group Messages', 3),
+
+       ('message_type', 'text', 'text', 'Text', 0),
+       ('message_type', 'image', 'image', 'Image', 1),
+       ('message_type', 'video', 'video', 'Video', 2),
+       ('message_type', 'file', 'file', 'File', 3),
+       ('message_type', 'mention', 'mention', 'Mention', 4);
 

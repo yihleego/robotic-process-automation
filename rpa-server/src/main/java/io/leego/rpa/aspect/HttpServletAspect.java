@@ -20,7 +20,7 @@ public class HttpServletAspect {
     }
 
     @AfterReturning(pointcut = "@within(org.springframework.web.bind.annotation.RestController)", returning = "result")
-    public Object responseAround(Result<?> result) {
+    public Object convertResultMessageAfterReturning(Result<?> result) {
         if (StringUtils.hasText(result.getMessage())) {
             result.setMessage(messageConverter.convert(result.getMessage()));
         }

@@ -34,7 +34,7 @@ public abstract class BaseEntity implements Persistable<String> {
     @Column(nullable = true, insertable = false)
     protected LocalDateTime updatedTime;
     @Transient
-    private boolean _new = false;
+    private transient boolean _new = true;
 
     /**
      * Persist the entity if the returned value is <code>true</code>,
@@ -48,14 +48,6 @@ public abstract class BaseEntity implements Persistable<String> {
         return _new;
     }
 
-    public void makeInsertable() {
-        this._new = true;
-    }
-
-    public void makeUpdatable() {
-        this._new = false;
-    }
-
     @PostLoad
     void postLoad() {
         this._new = false;
@@ -66,5 +58,13 @@ public abstract class BaseEntity implements Persistable<String> {
         if (this.id == null) {
             this.id = UniqueId.next().toString();
         }
+    }
+
+    public void makeInsertable() {
+        this._new = true;
+    }
+
+    public void makeUpdatable() {
+        this._new = false;
     }
 }

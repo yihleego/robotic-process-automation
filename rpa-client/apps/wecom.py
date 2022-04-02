@@ -4,7 +4,7 @@ from datetime import datetime
 from pywinauto.findwindows import find_elements, find_windows, find_window
 from pyzbar import pyzbar
 
-from apps.app import AirApp, AppConfig, AppUser, TaskMessageType
+from apps.app import AirApp, AppConfig, AppUser, MessageType
 
 
 class WeCom(AirApp):
@@ -163,7 +163,7 @@ class WeCom(AirApp):
             if 'type' not in m or 'content' not in m:
                 raise Exception("Invalid messages")
         dir_path = "{}\\{}\\{}".format(self.temps_path, self.app_id(), datetime.now().strftime('%Y%m%d'))
-        file_types = [TaskMessageType.IMAGE, TaskMessageType.VIDEO, TaskMessageType.FILE]
+        file_types = [MessageType.IMAGE, MessageType.VIDEO, MessageType.FILE]
         file_urls = [message['content'] for message in messages if message['type'] in file_types]
         file_paths = self.download(file_urls, dir_path)
         return target, messages, file_paths
@@ -178,7 +178,7 @@ class WeCom(AirApp):
             if file_count == 20:
                 self.key("{ENTER}", 1)
                 file_count = 0
-            if type == TaskMessageType.TEXT:
+            if type == MessageType.TEXT:
                 if len(content) <= 4000:
                     self.copy(content)
                     self.key("^v", 0.5)
@@ -188,19 +188,19 @@ class WeCom(AirApp):
                         self.copy(v)
                         self.key("^v", 0.5)
                         self.key("{ENTER}", 1)
-            elif type == TaskMessageType.IMAGE:
+            elif type == MessageType.IMAGE:
                 self.click('main_message_image_btn.png', 1)
                 self.copy(file_paths[content])
                 self.key("^v", 0.5)
                 self.key("{ENTER}", 0.5)
                 file_count = file_count + 1
-            elif type == TaskMessageType.VIDEO or type == TaskMessageType.FILE:
+            elif type == MessageType.VIDEO or type == MessageType.FILE:
                 self.click('main_message_file_btn.png', 1)
                 self.copy(file_paths[content])
                 self.key("^v", 0.5)
                 self.key("{ENTER}", 0.5)
                 file_count = file_count + 1
-            elif type == TaskMessageType.MENTION:
+            elif type == MessageType.MENTION:
                 self.copy('@' + content)
                 self.key("^v", 0.5)
                 self.key("{ENTER}", 0.5)
