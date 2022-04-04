@@ -229,6 +229,145 @@ values ('tid', 'uid', 'wechat', 'login', 0, null, 0, now(), null, '2022-01-01 10
 
 ![task_wechat_send_group_messages](images/task_wechat_send_group_messages.gif)
 
+### 企业微信客户端自动化
+
+#### 企业微信客户端登录任务
+
+*登录客户端不需要参数*
+
+![task_wecom_login](images/task_wecom_login.gif)
+
+#### 企业微信客户端登出任务
+
+*登出客户端不需要参数*
+
+![task_wecom_logout](images/task_wecom_logout.gif)
+
+#### 企业微信客户端发送个人消息任务
+
+参数格式：
+
+| Property  | Type      | Required | Description     |
+|:----------|:----------|:---------|:----------------|
+| target    | String    | 必填       | 发送对象。           |
+| messages  | Message[] | 必填       | 消息对象数组。         |
+| └ type    | String    | 必填       | 消息类型。           |
+| └ content | String    | 必填       | 消息内容，文本内容或文件地址。 |
+
+消息类型：
+
+| Code    | Name    | Description |
+|:--------|:--------|:------------|
+| text    | TEXT    | 文本          |
+| image   | IMAGE   | 图片          |
+| video   | VIDEO   | 视频          |
+| file    | FILE    | 文件          |
+
+参数示例：
+
+```json
+{
+  "target": "friend",
+  "messages": [
+    {
+      "type": "text",
+      "content": "message"
+    },
+    {
+      "type": "image",
+      "content": "https://rpa.leego.io/image.png"
+    },
+    {
+      "type": "video",
+      "content": "https://rpa.leego.io/video.mp4"
+    },
+    {
+      "type": "file",
+      "content": "https://rpa.leego.io/file.zip"
+    }
+  ]
+}
+```
+
+![task_wecom_send_private_messages](images/task_wecom_send_private_messages.gif)
+
+#### 企业微信客户端发送群消息任务
+
+参数格式：
+
+| Property  | Type      | Required | Description     |
+|:----------|:----------|:---------|:----------------|
+| target    | String    | 必填       | 群名称。            |
+| messages  | Message[] | 必填       | 消息对象数组。         |
+| └ type    | String    | 必填       | 消息类型。           |
+| └ content | String    | 必填       | 消息内容，文本内容或文件地址。 |
+
+消息类型：
+
+| Code    | Name    | Description |
+|:--------|:--------|:------------|
+| text    | TEXT    | 文本          |
+| image   | IMAGE   | 图片          |
+| video   | VIDEO   | 视频          |
+| file    | FILE    | 文件          |
+| mention | MENTION | 提醒          |
+
+参数示例：
+
+```json
+{
+  "target": "group",
+  "messages": [
+    {
+      "type": "text",
+      "content": "message"
+    },
+    {
+      "type": "image",
+      "content": "https://rpa.leego.io/image.png"
+    },
+    {
+      "type": "video",
+      "content": "https://rpa.leego.io/video.mp4"
+    },
+    {
+      "type": "file",
+      "content": "https://rpa.leego.io/file.zip"
+    },
+    {
+      "type": "mention",
+      "content": "member"
+    }
+  ]
+}
+```
+
+![task_wecom_send_group_messages](images/task_wecom_send_group_messages.gif)
+
+#### 微信客户端添加联系人任务
+
+参数格式：
+
+| Property | Type      | Required | Description |
+|:---------|:----------|:---------|:------------|
+| target   | String    | 必填       | 群名称。        |
+| contacts | Contact[] | 必填       | 联系人对象数组。    |
+| └ target | String    | 必填       | 用户手机号码或邮箱。  |
+| └ reason | String    | 可选       | 添加联系人备注。    |
+
+参数示例：
+
+```json
+{
+  "contacts": [
+    {"target": "phone"},
+    {"target": "email", "reason": "reason"}
+  ]
+}
+```
+
+*过于先进，不宜展示。*
+
 ## Documentation
 
 ### 通过关闭互斥体实现多客户端运行

@@ -83,7 +83,7 @@ class WeCom(AirApp):
 
     def logout(self, data=None):
         logging.debug('Logout, handle: %d', self.handle)
-        self.close_handle(self.handle)
+        self.kill(self.process)
 
     def send_private_messages(self, data):
         logging.debug('Send private messages, handle: %d, data: %s', self.handle, data)
@@ -127,7 +127,7 @@ class WeCom(AirApp):
         self.click('menu_message_manager_menu_item.png', 1)
         message_manager_handle = find_window(class_name='MsgManagerWindow')
         if not message_manager_handle:
-            raise Exception("Failed to open message manager")
+            raise Exception("Failed to open message manager window")
         self.connect(message_manager_handle)
         # Click dropdown button and search group
         self.click('message_manager_dropdown_btn.png', 0.5)
@@ -151,22 +151,53 @@ class WeCom(AirApp):
             raise Exception("Failed to send messages")
 
     def add_contacts(self, data):
-        logging.debug('Add Contacts, handle: %d', self.handle)
-        raise NotImplementedError
-
-    def _check_messages(self, data):
-        if not data or not data.get('target') or not data.get('messages'):
-            raise Exception("Invalid data")
-        target = data['target']
-        messages = data['messages']
-        for m in messages:
-            if 'type' not in m or 'content' not in m:
-                raise Exception("Invalid messages")
-        dir_path = "{}\\{}\\{}".format(self.temps_path, self.app_id(), datetime.now().strftime('%Y%m%d'))
-        file_types = [MessageType.IMAGE, MessageType.VIDEO, MessageType.FILE]
-        file_urls = [message['content'] for message in messages if message['type'] in file_types]
-        file_paths = self.download(file_urls, dir_path)
-        return target, messages, file_paths
+        logging.debug('Add contacts, handle: %d, data: %s', self.handle, data)
+        # Validate data before adding contacts
+        contacts = self._check_contacts(data)
+        self.connect(self.handle)
+        # Click contact button
+        self.click(['main_nav_contact_btn.png', 'main_nav_contact_btn_hover.png', 'main_nav_contact_btn_focus.png'])
+        # Click new friend logo icon
+        self.click('contact_new_friend_logo_btn.png', 0.5)
+        for contact in contacts:
+            target, reason = contact.get('target'), contact.get('reason')
+            self.connect(self.handle)
+            # Click new friend plus button
+            self.click('contact_new_friend_plus_btn.png', 0.5)
+            user_search_handle = find_window(class_name='SearchExternalsWnd')
+            if not user_search_handle:
+                raise Exception("Failed to open search window")
+            self.connect(user_search_handle)
+            self.click(['contact_new_friend_search_input1.png', 'contact_new_friend_search_input2.png'], 0.5)
+            self.copy(target)
+            self.key("^v", 0.5)
+            self.key("{ENTER}", 2)
+            # Throw if the user cannot be found
+            if not self.click('contact_new_friend_add_btn.png', 2):
+                raise Exception('User cannot be found')
+            # Connect to reason input window
+            reason_input_handle = find_window(class_name='InputReasonWnd')
+            if not reason_input_handle:
+                raise Exception("Failed to open reason input window")
+            self.connect(reason_input_handle)
+            # Input reason if it is exists
+            if reason:
+                close_pos = self.click('contact_new_friend_close_btn.png', 0.5)
+                if close_pos:
+                    self.click(close_pos, 0.5)
+                    self.click((close_pos[0] - 50, close_pos[1]), 0.5)
+                    self.copy(reason)
+                    self.key("^v", 0.5)
+            # Click apply button
+            self.click('contact_new_friend_apply_btn.png', 0.5)
+            try:
+                self.close_handle(reason_input_handle)
+            except:
+                logging.error("Failed to close reason input window")
+            try:
+                self.close_handle(user_search_handle)
+            except:
+                logging.error("Failed to close user search window")
 
     def _send_messages(self, target, messages, file_paths):
         self.click('main_message_input.png')
@@ -205,6 +236,29 @@ class WeCom(AirApp):
                 self.key("^v", 0.5)
                 self.key("{ENTER}", 0.5)
         self.key("{ENTER}", 1)
+
+    def _check_messages(self, data):
+        if not data or not data.get('target') or not data.get('messages'):
+            raise Exception("Invalid data")
+        target = data['target']
+        messages = data['messages']
+        for m in messages:
+            if 'type' not in m or 'content' not in m:
+                raise Exception("Invalid messages")
+        dir_path = "{}\\{}\\{}".format(self.temps_path, self.app_id(), datetime.now().strftime('%Y%m%d'))
+        file_types = [MessageType.IMAGE, MessageType.VIDEO, MessageType.FILE]
+        file_urls = [message['content'] for message in messages if message['type'] in file_types]
+        file_paths = self.download(file_urls, dir_path)
+        return target, messages, file_paths
+
+    def _check_contacts(self, data):
+        if not data or not data.get('contacts'):
+            raise Exception("Invalid data")
+        contacts = data['contacts']
+        for c in contacts:
+            if 'target' not in c:
+                raise Exception("Invalid contacts")
+        return contacts
 
     def _check_error_popup(self):
         message_box_elements = find_elements(class_name='WeWorkMessageBoxFrame')

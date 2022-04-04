@@ -68,3 +68,12 @@ class WecomTestSuite(unittest.TestCase):
                 {"type": MessageType.MENTION, "content": "member_name"},
             ]
         })
+
+    def test_add_contacts(self):
+        client = self.get_client()
+        client.add_contacts({
+            "contacts": [
+                {"target": "phone"},
+                {"target": "phone", "reason": "hello"}
+            ]
+        })

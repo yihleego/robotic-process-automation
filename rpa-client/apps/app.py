@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import signal
 import time
 import winreg
 from abc import ABC
@@ -225,6 +226,11 @@ class Capable:
             return
         hwnd = HwndWrapper(handle)
         hwnd.close()
+
+    def kill(self, process):
+        if not process:
+            return
+        os.kill(process, signal.SIGABRT)
 
     def snapshot(self, handle):
         win32gui.SendMessage(handle, win32con.WM_SYSCOMMAND, win32con.SC_RESTORE, 0)
