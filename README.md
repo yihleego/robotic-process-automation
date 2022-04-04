@@ -530,6 +530,20 @@ for /f "skip=1 tokens=3" %%s in ('query user %USERNAME%') do (
 - https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/tscon
 - https://support.smartbear.com/testcomplete/docs/testing-with/running/via-rdp/keeping-computer-unlocked.html
 
+### 功能拓展
+
+若需要拓展自动化功能或兼容不同版本的客户端，您可以在 [rpa-client/app](/rpa-client/apps) 模块中新增或编辑任务脚本。
+
+项目中主要使用以下两种方式实现：
+
+1. [pywinauto](https://github.com/pywinauto/pywinauto)
+
+   是用于 Microsoft Windows GUI 自动化 的 python 模块。在最简单的情况下，它允许您将鼠标和键盘操作发送到 Windows 对话框和控件，但它支持更复杂的操作，例如获取文本数据。
+
+3. [Airtest](https://github.com/AirtestProject/Airtest)
+
+   是由网易游戏推出的一个跨平台的、基于图像识别的UI自动化测试框架，适用于游戏和App，支持平台有Windows、Android和iOS。
+
 ## Deployment
 
 ### RPA客户端部署
