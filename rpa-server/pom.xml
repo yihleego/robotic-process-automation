@@ -17,8 +17,8 @@
         <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
-        <maven-javadoc-plugin.version>3.3.2</maven-javadoc-plugin.version>
-        <spring-boot.version>3.0.0-M1</spring-boot.version>
+        <maven-javadoc-plugin.version>3.4.1</maven-javadoc-plugin.version>
+        <spring-boot.version>3.0.0-RC2</spring-boot.version>
         <netty.version>4.1.75.Final</netty.version>
         <querydsl.version>5.0.0</querydsl.version>
     </properties>
