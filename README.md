@@ -51,7 +51,7 @@ curl -X POST --location "http://localhost:9999/users" \
           \"users\": [
             {
               \"id\": \"uid\",
-              \"app_id\": \"wechat\",
+              \"appId\": \"wechat\",
               \"account\": \"account\",
               \"nickname\": \"nickname\"
             }
@@ -603,10 +603,10 @@ mvn clean install
 | spring.datasource.url               | 数据源URL      | jdbc:mysql://localhost:3306/rpa |
 | spring.datasource.username          | 数据源用户名      |                                 |
 | spring.datasource.password          | 数据源密码       |                                 |
-| spring.redis.host                   | Redis主机     | localhost                       |
-| spring.redis.port                   | Redis端口     | 6379                            |
-| spring.redis.password               | Redis密码     |                                 |
-| spring.redis.database               | Redis数据库    | 0                               |
+| spring.data.redis.host              | Redis主机     | localhost                       |
+| spring.data.redis.port              | Redis端口     | 6379                            |
+| spring.data.redis.password          | Redis密码     |                                 |
+| spring.data.redis.database          | Redis数据库    | 0                               |
 
 上述配置可于 [application.properties](rpa-server/src/main/resources/application.properties) 文件中修改。
 
