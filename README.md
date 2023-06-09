@@ -634,6 +634,26 @@ mvn clean install
 
 运行 [RpaApplication.java](rpa-server/src/main/java/io/leego/rpa/RpaApplication.java) 即可。
 
+## Q&A
+
+### UiaApp 和 AirApp 的区别 
+
+- UiaApp：基于 UIA 实现的程序，通过 UI 组件的 ID、Name、Class 等定位对应的元素，然后对其进行操作，
+  类似 HTML 的 DOM 树，可以通过选择器定位元素和操作，例如: `$(".btn").click();`。
+- AirApp：是基于图像识别实现。
+
+判断一个应用是否支持 UIA 可以使用微软官方提供的软件 Inspect，
+可以从[官网](https://learn.microsoft.com/en-us/windows/win32/winauto/inspect-objects)或者[这个仓库](https://github.com/yihleego/Windows-Kits/tree/master/Inspect)下载：
+
+![inspect.png](images/inspect.png)
+
+示例中微信使用了 UiaApp 模式，因为它是基于 UIA 实现的；
+而企业微信使用了 AirApp 模式，它类似网页中仅有存在一个 Canvas，所有元素都是通过代码绘制渲染，所以只能通过图像识别定位。
+
+### RPA Server 问题
+
+请参考：[2#issue](https://github.com/yihleego/robotic-process-automation/issues/2)
+
 ## Contact
 
 - [提交问题](https://github.com/yihleego/robotic-process-automation/issues)
