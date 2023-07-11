@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime
 
-from pywinauto.findwindows import find_elements, find_windows, find_window
+from pywinauto.findwindows import find_elements, find_window
 from pyzbar import pyzbar
 
 from apps.app import AirApp, AppConfig, AppUser, MessageType
@@ -27,6 +27,8 @@ class WeCom(AirApp):
         config_handle = None
         edit_handle = None
         try:
+            self.connect(self.handle, foreground=True)
+
             # Popup userinfo menu
             self._popup_userinfo()
 
@@ -45,6 +47,7 @@ class WeCom(AirApp):
             userinfo_tab_pos = self.click(['setting/userinfo_tab.png', 'setting/userinfo_tab_focus.png'], 1)
             if not userinfo_tab_pos:
                 return None
+
             # Find company name
             self.double_click((userinfo_tab_pos[0] + 265, userinfo_tab_pos[1] + 21), 0.5)
             self.copy("")
@@ -72,6 +75,7 @@ class WeCom(AirApp):
             nickname = self.paste()
             if nickname is None:
                 return None
+            # TODO WeCom account is set to '${company}_${nickname}'
             return AppUser(account=company + '_' + nickname, nickname=nickname, company=company)
         finally:
             self.close_handle(config_handle)
@@ -80,7 +84,13 @@ class WeCom(AirApp):
     def login(self, data=None):
         logging.debug('Login, handle: %d', self.handle)
         self.connect(self.handle)
+
+        # 1. Try to refresh the QR code
+        # 2. Try to switch account
+        # 3. Try to clear last login info
         self.click(['login/refresh_qrcode_btn.png', 'login/switch_account_btn.png', 'login/back_btn.png'], 1)
+
+        # Read the QR code and decode it to URL
         snapshot = self.snapshot(self.handle)
         decoded = pyzbar.decode(snapshot)
         if decoded and decoded[0]:
@@ -89,36 +99,47 @@ class WeCom(AirApp):
 
     def logout(self, data=None):
         logging.debug('Logout, handle: %d', self.handle)
+        # Kill the process
         self.kill(self.process)
 
     def send_private_messages(self, data):
         logging.debug('Send private messages, handle: %d, data: %s', self.handle, data)
+
         # Validate data before sending messages
         target, messages, file_paths = self._check_messages(data)
+
         self.connect(self.handle)
+
         # Click contact button
         self.click(['main/navbar_message_button.png', 'main/navbar_message_button_focus.png', 'main/navbar_message_button_hover.png'])
-        # Search the user
+
+        # Search the target user
         self.click('main/search_clear_btn.png', 0.5)
         self.click(['main/search_input.png', 'main/search_input_focus.png'], 0.5)
         self.copy(target)
         self.key("^v", 1)
+
         # Throw if the user cannot be found
         if self.exists('main_search_no_result.png'):
             raise Exception('User cannot be found')
         self.key('{ENTER}', 0.5)
+
         # Send messages
         self._send_messages(target, messages, file_paths)
+
         # Throw if there is any error popup windows
         if not self._check_error_popup():
             raise Exception("Failed to send messages")
 
     def send_group_messages(self, data):
         logging.debug('Send group messages, handle: %d, data: %s', self.handle, data)
-        # validate data before sending messages
+
+        # Validate data before sending messages
         target, messages, file_paths = self._check_messages(data)
 
-        # popup userinfo menu
+        self.connect(self.handle, foreground=True)
+
+        # Popup userinfo menu
         self._popup_userinfo()
 
         # Open message manager
@@ -156,16 +177,21 @@ class WeCom(AirApp):
 
     def add_contacts(self, data):
         logging.debug('Add contacts, handle: %d, data: %s', self.handle, data)
+
         # Validate data before adding contacts
         contacts = self._check_contacts(data)
+
         self.connect(self.handle)
+
         # Click contact button
         self.click(['main/navbar_contact_button.png', 'main/navbar_contact_button_hover.png', 'main/navbar_contact_button_focus.png'])
+
         # Click new friend logo icon
         self.click('contact_new_friend_logo_btn.png', 0.5)
         for contact in contacts:
             target, reason = contact.get('target'), contact.get('reason')
             self.connect(self.handle)
+
             # Click new friend plus button
             self.click('main/contact_new_friend_button.png', 0.5)
             self.click('main/contact_new_friend_add_button.png', 0.5)
@@ -177,14 +203,17 @@ class WeCom(AirApp):
             self.copy(target)
             self.key("^v", 0.5)
             self.key("{ENTER}", 2)
+
             # Throw if the user cannot be found
             if not self.click('contact_new_friend_add_btn.png', 2):
                 raise Exception('User cannot be found')
+
             # Connect to reason input window
             reason_input_handle = find_window(class_name='InputReasonWnd')
             if not reason_input_handle:
                 raise Exception("Failed to open reason input window")
             self.connect(reason_input_handle)
+
             # Input reason if it exists
             if reason:
                 close_pos = self.click('contact_new_friend_close_btn.png', 0.5)
@@ -193,6 +222,7 @@ class WeCom(AirApp):
                     self.click((close_pos[0] - 50, close_pos[1]), 0.5)
                     self.copy(reason)
                     self.key("^v", 0.5)
+
             # Click apply button
             self.click('contact_new_friend_apply_btn.png', 0.5)
             try:
@@ -205,6 +235,22 @@ class WeCom(AirApp):
                 logging.error("Failed to close user search window")
 
     def _send_messages(self, target, messages, file_paths):
+        """
+        Sends messages to a target.
+
+        Parameters:
+        - target (str): The target where the messages will be sent.
+        - messages (list): The list of messages to be sent. Each message should be a dictionary with 'type' and 'content' keys.
+        - file_paths (dict): A dictionary mapping content values to their corresponding file paths.
+
+        Returns:
+        - None
+
+        Note:
+        - The method uses image recognition and keyboard inputs to send the messages.
+        - If a text message exceeds 4000 characters, it will be split into multiple messages with a maximum length of 4000 characters.
+        - The method will automatically handle file attachments (images, videos, and files) as well as mentions.
+        """
         self.click('main/chat_message_input.png')
         self.key("^a{BACKSPACE}", 0.5)
         file_count = 0
@@ -251,8 +297,6 @@ class WeCom(AirApp):
         Returns:
         - False if the navbar message button or the menu window cannot be found.
         """
-        self.connect(self.handle, foreground=True)
-
         # Find the navbar message button
         message_button_pos = self.exists(['main/navbar_message_button.png', 'main/navbar_message_button_focus.png', 'main/navbar_message_button_hover.png'])
         if not message_button_pos:
@@ -269,6 +313,18 @@ class WeCom(AirApp):
         return True
 
     def _check_messages(self, data):
+        """
+        Checks the validity of the given data and downloads all files in the messages.
+
+        Parameters:
+        - data (dict): A dictionary containing the target and messages.
+
+        Returns:
+        - tuple: A tuple containing the target, messages, and file paths.
+
+        Raises:
+        - Exception: If the data is invalid or if any message in the messages list is invalid.
+        """
         if not data or not data.get('target') or not data.get('messages'):
             raise Exception("Invalid data")
         target = data['target']
@@ -283,6 +339,15 @@ class WeCom(AirApp):
         return target, messages, file_paths
 
     def _check_contacts(self, data):
+        """
+        Checks if the given data contains valid contacts.
+
+        :param data: The data to be checked.
+
+        :raises Exception: If the data is invalid or if the contacts in the data are invalid.
+
+        :return: The list of valid contacts.
+        """
         if not data or not data.get('contacts'):
             raise Exception("Invalid data")
         contacts = data['contacts']
@@ -292,6 +357,11 @@ class WeCom(AirApp):
         return contacts
 
     def _check_error_popup(self):
+        """
+        Check for any error popups.
+
+        :return: True if no error popups are found, False otherwise.
+        """
         message_box_elements = find_elements(class_name='WeWorkMessageBoxFrame')
         if message_box_elements:
             for element in message_box_elements:
@@ -300,4 +370,18 @@ class WeCom(AirApp):
         return True
 
     def _slice_text(self, obj, sec):
+        """
+         Slices the given text or string into sections of specified length.
+
+        Parameters:
+        - obj (str): The text or string to be sliced.
+        - sec (int): The length of each section.
+
+        Returns:
+        - list: A list containing the sliced sections of the text or string.
+
+        Example:
+        >>> _slice_text("Hello, world!", 5)
+        ['Hello', ', wor', 'ld!']
+        """
         return [obj[i:i + sec] for i in range(0, len(obj), sec)]
