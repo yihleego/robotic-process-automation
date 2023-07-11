@@ -16,5 +16,5 @@ class QQ(UiaApp):
             registry_path="",
             registry_key="")
 
-    def find_user(self):
+    def find_userinfo(self):
         return

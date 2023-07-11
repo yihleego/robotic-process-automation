@@ -162,7 +162,7 @@ class App(ABC):
                 processes.append(p[2])
         return processes
 
-    def find_user(self) -> AppUser:
+    def find_userinfo(self) -> AppUser:
         raise NotImplementedError
 
     def execute(self, task_type, task_data=None):
@@ -197,7 +197,7 @@ class App(ABC):
         try:
             if load_cache():
                 return True
-            user = self.find_user()
+            user = self.find_userinfo()
             if user:
                 self.user = user
                 self.online_time = self.now()
@@ -323,9 +323,7 @@ class AirApp(App, Capable):
         if ok:
             airtest.core.api.touch(ok)
             self.wait(wait_time)
-            return ok
-        else:
-            return False
+        return ok
 
     def double_click(self, v, wait_time=0):
         ok = self.exists(v)

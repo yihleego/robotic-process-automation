@@ -650,6 +650,11 @@ mvn clean install
 示例中微信使用了 UiaApp 模式，因为它是基于 UIA 实现的；
 而企业微信使用了 AirApp 模式，它类似网页中仅有存在一个 Canvas，所有元素都是通过代码绘制渲染，所以只能通过图像识别定位。
 
+### Could not find module 'libiconv.dll'
+
+下载 Visual C++ Redistributable Packages for Visual Studio 2013
+https://www.microsoft.com/zh-cn/download/confirmation.aspx?id=40784
+
 ### RPA Server 问题
 
 请参考：[2#issue](https://github.com/yihleego/robotic-process-automation/issues/2)

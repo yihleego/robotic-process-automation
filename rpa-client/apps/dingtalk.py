@@ -16,7 +16,7 @@ class DingTalk(UiaApp):
             registry_path=r"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\钉钉",
             registry_key="UninstallString")
 
-    def find_user(self):
+    def find_userinfo(self):
         return
 
     def login(self, data=None):

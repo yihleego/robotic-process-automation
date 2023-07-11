@@ -29,9 +29,9 @@ class DingTalkTestSuite(unittest.TestCase):
         logging.debug(client.user)
         assert client.user is not None
 
-    def test_find_user(self):
+    def test_find_userinfo(self):
         client = self.get_client()
-        user = client.find_user()
+        user = client.find_userinfo()
         logging.debug(user)
         assert user is not None
 

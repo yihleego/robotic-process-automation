@@ -23,7 +23,7 @@ class WeChat(UiaApp):
             registry_path=r"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\WeChat",
             registry_key="DisplayIcon")
 
-    def find_user(self):
+    def find_userinfo(self):
         wechat_app = self.connect(self.handle)
         wechat_window = wechat_app.window(class_name="WeChatMainWndForPC")
         # Click avatar button and show user profile card
