@@ -50,7 +50,7 @@ class WeChat(UiaApp):
         wechat_window = wechat_app.window(class_name="WeChatLoginWndForPC")
         try:
             # I'm not quite sure about the difference between "账号" and "帐号"
-            switch_account_button = wechat_window.child_window(control_type='Button', title='切换帐号')
+            switch_account_button = wechat_window.child_window(control_type='Button', title_re='切换账号|切换帐号')
             if switch_account_button and switch_account_button.exists():
                 switch_account_button.click_input()
         except:
@@ -140,7 +140,7 @@ class WeChat(UiaApp):
         return target, messages, file_paths
 
     def _send_messages(self, wechat_window, target, messages, file_paths):
-        input_box = wechat_window.child_window(control_type='Edit', title='输入')
+        input_box = wechat_window.child_window(control_type='Edit', title_re=f'输入|{target}')
         input_box.type_keys('^a')
         for message in messages:
             type = message.get('type')
