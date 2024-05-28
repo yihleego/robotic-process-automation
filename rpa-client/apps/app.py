@@ -297,7 +297,7 @@ class AirApp(App, Capable):
     def connect(self, handle=None, foreground=True):
         if not handle:
             handle = self.handle
-        device = airtest.core.api.connect_device("Windows:///" + str(handle))
+        device = airtest.core.api.connect_device(f"Windows:///{handle}?foreground=False")
         if foreground:
             device.set_foreground()
             device.move((0, 0))

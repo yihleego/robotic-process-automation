@@ -552,10 +552,12 @@ for /f "skip=1 tokens=3" %%s in ('query user %USERNAME%') do (
 
 #### 下载并安装客户端
 
+需要注意 airtest 目前版本依赖`pywinauto==0.6.3`，当前项目需要`pywinauto==0.6.8`，在安装依赖时请加上`--no-deps`参数，或者在安装完依赖后手动执行一遍`pip install pywinauto==0.6.8`。
+
 ```bash
 git clone https://github.com/yihleego/robotic-process-automation.git
 cd robotic-process-automation/rpa-client
-pip install -r requirements.txt
+pip install --no-deps -r requirements.txt
 ```
 
 #### 配置客户端
