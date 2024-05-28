@@ -37,7 +37,7 @@ class Scheduler:
     Task scheduler for RPA.
     """
 
-    def __init__(self, host='localhost', port=10000, path='/rpa', ssl=False, url=None,
+    def __init__(self, host='localhost', port=18888, path='/rpa', ssl=False, url=None,
                  app_size: int = 1, app_paths: dict[str, str] = None):
         """
         Scheduler initialization
@@ -47,7 +47,7 @@ class Scheduler:
         host: str
             RPA server host. Default is 'localhost'.
         port: int
-            RPA server port. Default is '10000'.
+            RPA server port. Default is '18888'.
         path: str
             RPA server path. Default is '/rpa'.
         url: str

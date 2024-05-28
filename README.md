@@ -45,7 +45,7 @@
 接口示例：
 
 ```shell
-curl -X POST --location "http://localhost:9999/users" \
+curl -X POST --location "http://localhost:8080/users" \
     -H "Content-Type: application/json" \
     -d "{
           \"users\": [
@@ -88,7 +88,7 @@ values ('uid', 'wechat', 'account', 'nickname', 'realname', 'company', 1, now(),
 示例：
 
 ```shell
-curl -X PATCH --location "http://localhost:9999/tasks" \
+curl -X PATCH --location "http://localhost:8080/tasks" \
     -H "Content-Type: application/json" \
     -d "{
           \"tasks\": [
@@ -565,7 +565,7 @@ pip install -r requirements.txt
 | Property            | Description | Default               |
 |:--------------------|:------------|:----------------------|
 | server.host         | 服务器主机       | localhost             |
-| server.port         | 服务器端口       | 10000                 |
+| server.port         | 服务器端口       | 18888                 |
 | server.path         | 服务器路径       | /rpa                  |
 | server.ssl          | 是否启用SSL     | False                 |
 | app.size            | 程序最大可运行数量   | 32                    |
@@ -614,7 +614,7 @@ mvn clean install
 
 | Property                        | Description       | Default                          |
 |:--------------------------------|:------------------|:---------------------------------|
-| rpa.websocket.port              | WebSocket服务端口     | 10000                            |
+| rpa.websocket.port              | WebSocket服务端口     | 18888                            |
 | rpa.websocket.path              | WebSocket服务路径     | /rpa                             |
 | rpa.websocket.idle-timeout      | WebSocket服务空闲超时时间 | 5m                               |
 | rpa.converter.date-time-pattern | 全局日期时间格式          | yyyy-MM-dd HH:mm:ss              |

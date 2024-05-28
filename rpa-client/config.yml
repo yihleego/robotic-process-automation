@@ -2,7 +2,7 @@ server:
   # RPA server host.
   host: localhost
   # RPA server port.
-  port: 10000
+  port: 18888
   # RPA server path.
   path: /rpa
   # RPA server ssl.

@@ -21,7 +21,7 @@ public class RpaProperties {
 
     @Data
     public static class Websocket {
-        private Integer port = 10000;
+        private Integer port = 18888;
         private String path = "/rpa";
         private Duration idleTimeout = Duration.ofMinutes(5);
     }

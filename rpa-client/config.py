@@ -11,7 +11,7 @@ config = yaml.load(open(os.path.join(os.path.dirname(__file__), "config.yml"), '
 
 # Application
 SERVER_HOST = config.get("server").get("host", "localhost")
-SERVER_PORT = config.get("server").get("port", 10000)
+SERVER_PORT = config.get("server").get("port", 18888)
 SERVER_PATH = config.get("server").get("path", "/rpa")
 SERVER_SSL = config.get("server").get("ssl", False)
 APP_SIZE = config.get("app").get("size")
