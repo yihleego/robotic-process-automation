@@ -11,12 +11,17 @@ public class Order implements Serializable {
     private static final long serialVersionUID = -6757591751151983159L;
     private static final boolean DEFAULT_IGNORE_CASE = false;
     private static final Direction DEFAULT_DIRECTION = Direction.ASC;
+    private static final String IGNORECASE = "ignorecase";
 
     private Direction direction;
     private String property;
     private boolean ignoreCase;
 
     public Order() {
+    }
+
+    public Order(String property) {
+        this(DEFAULT_DIRECTION, property, DEFAULT_IGNORE_CASE);
     }
 
     public Order(Direction direction, String property) {
@@ -45,23 +50,27 @@ public class Order implements Serializable {
     }
 
     public static Order parse(String value) {
-        if (value == null || value.isBlank()) {
-            throw new IllegalArgumentException("Invalid value");
-        }
         int i = value.indexOf(':');
         if (i == -1) {
             return Order.by(value.strip());
         }
-        String p = value.substring(0, i).strip();
-        String d = value.substring(i + 1).strip();
-        if (p.isEmpty()) {
-            throw new IllegalArgumentException("Invalid property '%s'".formatted(p));
+        int j = value.indexOf(':', i + 1);
+        boolean ignoreCase = j != -1;
+        if (ignoreCase && !IGNORECASE.equalsIgnoreCase(value.substring(j + 1).strip())) {
+            throw new IllegalArgumentException("Invalid order");
         }
-        return new Order(Direction.fromString(d), p);
+        String property = value.substring(0, i).strip();
+        if (property.isEmpty()) {
+            throw new IllegalArgumentException("Invalid property '%s'".formatted(property));
+        }
+        String direction = ignoreCase ? value.substring(i + 1, j).strip() : value.substring(i + 1).strip();
+        return new Order(Direction.fromString(direction), property, ignoreCase);
     }
 
     public static String format(Order order) {
-        return order.getProperty() + ":" + order.getDirection();
+        return order.isIgnoreCase()
+                ? (order.getProperty() + ":" + order.getDirection() + ":" + IGNORECASE)
+                : (order.getProperty() + ":" + order.getDirection());
     }
 
     public Direction getDirection() {

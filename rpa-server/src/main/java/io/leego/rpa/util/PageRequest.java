@@ -7,10 +7,10 @@ import java.util.Objects;
 /**
  * @author Leego Yih
  */
-public class PageRequest extends SortRequest implements Pageable, Sortable, Serializable {
+public class PageRequest extends SortRequest implements Pageable, Serializable {
     @Serial
     private static final long serialVersionUID = -542101357510265940L;
-    /** One-based page index. */
+    /** Zero-based page index. */
     protected Integer page;
     /** The size of the page to be returned. */
     protected Integer size;
@@ -52,12 +52,12 @@ public class PageRequest extends SortRequest implements Pageable, Sortable, Seri
         if (page == null || size == null) {
             return null;
         }
-        return (long) (page - 1) * (long) size;
+        return (long) page * size;
     }
 
     @Override
     public boolean isPaged() {
-        return page != null && size != null && page > 0 && size > 0;
+        return page != null && size != null && page >= 0 && size > 0;
     }
 
     @Override

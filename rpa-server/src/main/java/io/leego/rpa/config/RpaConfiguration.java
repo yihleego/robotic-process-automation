@@ -5,23 +5,21 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import io.leego.rpa.converter.InstantConverter;
 import io.leego.rpa.converter.LocalDateConverter;
 import io.leego.rpa.converter.LocalDateTimeConverter;
 import io.leego.rpa.converter.LocalTimeConverter;
 import io.leego.rpa.converter.MessageConverter;
 import io.leego.rpa.converter.SortConverter;
+import io.leego.rpa.databind.SortModule;
 import io.leego.rpa.server.RpaServer;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -38,11 +36,6 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 
 /**
  * @author Leego Yih
@@ -85,9 +78,8 @@ public class RpaConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
-    public MessageConverter messageConverter(MessageSource messageSource) {
-        return new MessageConverter(messageSource);
+    public InstantConverter instantConverter() {
+        return new InstantConverter();
     }
 
     @Bean
@@ -97,29 +89,28 @@ public class RpaConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean
+    public MessageConverter messageConverter(MessageSource messageSource) {
+        return new MessageConverter(messageSource);
+    }
+
+    @Bean
     @Primary
     @ConditionalOnMissingBean(ObjectMapper.class)
     public ObjectMapper objectMapper(RpaProperties rpaProperties) {
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(rpaProperties.getConverter().getDateTimePattern());
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(rpaProperties.getConverter().getDatePattern());
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(rpaProperties.getConverter().getTimePattern());
-        return new ObjectMapper()
-                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        return JsonMapper.builder()
+                .enable(MapperFeature.USE_GETTERS_AS_SETTERS)
+                .enable(MapperFeature.REQUIRE_SETTERS_FOR_GETTERS)
                 .enable(JsonParser.Feature.ALLOW_SINGLE_QUOTES)
                 .enable(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES)
                 .enable(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN)
-                .setSerializationInclusion(JsonInclude.Include.NON_NULL)
-                .registerModules(
-                        new ParameterNamesModule(),
-                        new Jdk8Module(),
-                        new JavaTimeModule()
-                                .addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(dateTimeFormatter))
-                                .addSerializer(LocalDate.class, new LocalDateSerializer(dateFormatter))
-                                .addSerializer(LocalTime.class, new LocalTimeSerializer(timeFormatter))
-                                .addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(dateTimeFormatter))
-                                .addDeserializer(LocalDate.class, new LocalDateDeserializer(dateFormatter))
-                                .addDeserializer(LocalTime.class, new LocalTimeDeserializer(timeFormatter)));
+                .enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .disable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .disable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                .serializationInclusion(JsonInclude.Include.NON_NULL)
+                .addModules(new ParameterNamesModule(), new Jdk8Module(), new JavaTimeModule(), new SortModule())
+                .build();
     }
 
     @Configuration

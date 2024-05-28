@@ -2,8 +2,8 @@ package io.leego.rpa.util;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * @author Leego Yih
@@ -12,9 +12,9 @@ public class Result<T> implements Serializable {
     @Serial
     private static final long serialVersionUID = -6923820166518806231L;
     private T data;
-    private Boolean success;
-    private String message;
     private Integer code;
+    private String message;
+    private Boolean success;
 
     public Result() {
     }
@@ -23,60 +23,60 @@ public class Result<T> implements Serializable {
         this.success = success;
     }
 
-    public Result(T data, Boolean success) {
-        this.data = data;
-        this.success = success;
+    public Result(Integer code, String message) {
+        this.code = code;
+        this.message = message;
     }
 
-    public Result(T data, Boolean success, String message, Integer code) {
+    public Result(Integer code, String message, T data, Boolean success) {
+        this.code = code;
+        this.message = message;
         this.data = data;
         this.success = success;
-        this.message = message;
-        this.code = code;
     }
 
     public static <T> Result<T> buildSuccess(Integer code, String message, T data) {
-        return new Result<>(data, true, message, code);
+        return new Result<>(code, message, data, true);
     }
 
     public static <T> Result<T> buildSuccess(Integer code, T data) {
-        return new Result<>(data, true, null, code);
+        return new Result<>(code, null, data, true);
     }
 
     public static <T> Result<T> buildSuccess(String message, T data) {
-        return new Result<>(data, true, message, null);
+        return new Result<>(null, message, data, true);
     }
 
     public static <T> Result<T> buildSuccess(String message) {
-        return new Result<>(null, true, message, null);
+        return new Result<>(null, message, null, true);
     }
 
     public static <T> Result<T> buildSuccess(T data) {
-        return new Result<>(data, true, null, null);
+        return new Result<>(null, null, data, true);
     }
 
     public static <T> Result<T> buildSuccess() {
-        return new Result<>(null, true, null, null);
+        return new Result<>(null, null, null, true);
     }
 
     public static <T> Result<T> buildFailure(Integer code, String message, T data) {
-        return new Result<>(data, false, message, code);
+        return new Result<>(code, message, data, false);
     }
 
     public static <T> Result<T> buildFailure(Integer code, String message) {
-        return new Result<>(null, false, message, code);
+        return new Result<>(code, message, null, false);
     }
 
     public static <T> Result<T> buildFailure(Integer code) {
-        return new Result<>(null, false, null, code);
+        return new Result<>(code, null, null, false);
     }
 
     public static <T> Result<T> buildFailure(String message, T data) {
-        return new Result<>(data, false, message, null);
+        return new Result<>(null, message, data, false);
     }
 
     public static <T> Result<T> buildFailure(String message) {
-        return new Result<>(null, false, message, null);
+        return new Result<>(null, message, null, false);
     }
 
     public static <T> Result<T> buildFailure() {
@@ -85,57 +85,33 @@ public class Result<T> implements Serializable {
 
     public static <T> Result<T> buildFailure(Error error) {
         return error != null
-                ? new Result<T>(null, false, error.getMessage(), error.getCode())
-                : new Result<T>(false);
+                ? new Result<>(error.getCode(), error.getMessage(), null, false)
+                : new Result<>(false);
     }
 
     public static <T> Result<T> buildFailure(Throwable cause) {
         return cause != null
-                ? new Result<T>(null, false, cause.getMessage(), null)
-                : new Result<T>(false);
+                ? new Result<>(null, cause.getMessage(), null, false)
+                : new Result<>(false);
     }
 
-    public static boolean isSuccessful(Result<?> result) {
-        return result != null && result.getSuccess() != null && result.getSuccess();
+    public static boolean isSuccessful(Result<?> r) {
+        if (r == null) return false;
+        if (r.success != null) return r.success;
+        if (r.code != null) return r.code == 0;
+        return true;
     }
 
-    public static boolean isUnsuccessful(Result<?> result) {
-        return !isSuccessful(result);
-    }
-
-    public static boolean isSuccessfulWithData(Result<?> result) {
-        return isSuccessful(result) && result.getData() != null;
-    }
-
-    public static <T, E extends Throwable> T getDataOrThrow(Result<T> result, BiFunction<Integer, String, E> s) throws E {
-        if (result.getSuccess()) {
-            return result.getData();
-        }
-        throw s.apply(result.getCode(), result.getMessage());
+    public static boolean isUnsuccessful(Result<?> r) {
+        return !isSuccessful(r);
     }
 
     public T getData() {
-        return this.data;
+        return data;
     }
 
     public void setData(T data) {
         this.data = data;
-    }
-
-    public Boolean getSuccess() {
-        return success;
-    }
-
-    public void setSuccess(Boolean success) {
-        this.success = success;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 
     public Integer getCode() {
@@ -146,24 +122,45 @@ public class Result<T> implements Serializable {
         this.code = code;
     }
 
-    public <U> Result<U> map(Function<T, U> converter) {
-        return new Result<>(converter.apply(data), success, message, code);
+    public String getMessage() {
+        return message;
     }
 
-    public <U> Result<U> mapIfPresent(Function<T, U> converter) {
-        return new Result<>(data != null ? converter.apply(data) : null, success, message, code);
+    public void setMessage(String message) {
+        this.message = message;
     }
 
-    public <U> Result<U> toFailure() {
-        return new Result<>(null, false, message, code);
+    public Boolean getSuccess() {
+        return success;
+    }
+
+    public void setSuccess(Boolean success) {
+        this.success = success;
+    }
+
+    public Result<T> success() {
+        return new Result<>(code, message, null, true);
+    }
+
+    public Result<T> failure() {
+        return new Result<>(code, message, null, false);
+    }
+
+    public <U> Result<U> map(Function<T, U> mapper) {
+        return new Result<>(code, message, mapper.apply(data), success);
+    }
+
+    public <U> Result<U> map(Function<T, U> mapper, Predicate<T> filter) {
+        return new Result<>(code, message, filter.test(data) ? mapper.apply(data) : null, success);
     }
 
     @Override
     public String toString() {
-        return "Result{data=" + (data != null ? data.toString() : "null") +
-                ", success=" + success +
-                ", message=\"" + message + '\"' +
-                ", code=" + code +
-                '}';
+        StringBuilder sb = new StringBuilder();
+        sb.append("Result{data=").append(data);
+        if (code != null) sb.append(", code=").append(code);
+        if (message != null) sb.append(", message='").append(message).append("'");
+        if (success != null) sb.append(", success=").append(success);
+        return sb.append('}').toString();
     }
 }

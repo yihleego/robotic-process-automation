@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -14,7 +15,7 @@ import java.util.stream.Stream;
 /**
  * @author Leego Yih
  */
-public class Page<T> implements Serializable {
+public class Page<T> implements Serializable, Iterable<T> {
     @Serial
     private static final long serialVersionUID = 3214571808482585491L;
     /** The page content as {@link List}. */
@@ -95,7 +96,7 @@ public class Page<T> implements Serializable {
             return new Page<>(list, page, size);
         }
         long pages;
-        if (page > 0 && size > 0) {
+        if (page >= 0 && size > 0) {
             pages = total % size > 0 ? total / size + 1 : total / size;
         } else {
             pages = 0L;
@@ -115,8 +116,7 @@ public class Page<T> implements Serializable {
         if (page == null) {
             return new Page<>(Collections.emptyList());
         }
-        return new Page<>(Collections.emptyList(),
-                page.page, page.size, page.total, page.pages, page.extra);
+        return new Page<>(Collections.emptyList(), page.page, page.size, page.total, page.pages, page.extra);
     }
 
     public static <T> Page<T> empty(Pageable pageable) {
@@ -127,13 +127,27 @@ public class Page<T> implements Serializable {
         return new Page<>(Collections.emptyList());
     }
 
+    public <U> Page<U> toEmpty() {
+        return new Page<>(Collections.emptyList(), page, size, total, pages, extra);
+    }
+
     public <U> Page<U> map(Function<? super T, ? extends U> converter) {
-        return new Page<>(list == null ? Collections.emptyList() : list.stream().map(converter).collect(Collectors.toList()),
+        return new Page<>(
+                list == null || list.isEmpty() ? Collections.emptyList() : list.stream().map(converter).collect(Collectors.toList()),
                 page, size, total, pages, extra);
     }
 
-    public <U> Page<U> toEmpty() {
-        return new Page<>(Collections.emptyList(), page, size, total, pages, extra);
+    public boolean addAll(Collection<? extends T> c) {
+        if (list == null) {
+            list = new ArrayList<>();
+        }
+        return list.addAll(c);
+    }
+
+    public void clear() {
+        if (list != null) {
+            list.clear();
+        }
     }
 
     public Page<T> peek(Consumer<? super T> action) {
@@ -143,13 +157,25 @@ public class Page<T> implements Serializable {
         return this;
     }
 
+    @Override
     public void forEach(Consumer<? super T> action) {
         if (list != null) {
             list.forEach(action);
         }
     }
 
+    @Override
+    public Iterator<T> iterator() {
+        if (list == null) {
+            return Collections.emptyIterator();
+        }
+        return list.iterator();
+    }
+
     public Stream<T> stream() {
+        if (list == null) {
+            return Stream.empty();
+        }
         return list.stream();
     }
 
@@ -162,7 +188,7 @@ public class Page<T> implements Serializable {
     }
 
     public boolean hasPrevious() {
-        return page != null && size != null && page > 1 && size > 0;
+        return page != null && size != null && page > 0 && size > 0;
     }
 
     public boolean hasNext() {
@@ -219,52 +245,5 @@ public class Page<T> implements Serializable {
 
     public <E> E getExtra(Class<E> clazz) {
         return clazz.cast(extra);
-    }
-
-    public static <T> Builder<T> builder() {
-        return new Builder<>();
-    }
-
-    public static class Builder<T> {
-        private List<T> list;
-        private Integer page;
-        private Integer size;
-        private Long total;
-        private Long pages;
-        private Object extra;
-
-        public Builder<T> list(List<T> list) {
-            this.list = list;
-            return this;
-        }
-
-        public Builder<T> page(Integer page) {
-            this.page = page;
-            return this;
-        }
-
-        public Builder<T> size(Integer size) {
-            this.size = size;
-            return this;
-        }
-
-        public Builder<T> total(Long total) {
-            this.total = total;
-            return this;
-        }
-
-        public Builder<T> pages(Long pages) {
-            this.pages = pages;
-            return this;
-        }
-
-        public Builder<T> extra(Object extra) {
-            this.extra = extra;
-            return this;
-        }
-
-        public Page<T> build() {
-            return new Page<>(list, page, size, total, pages, extra);
-        }
     }
 }

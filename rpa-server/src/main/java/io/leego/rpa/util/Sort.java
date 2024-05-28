@@ -4,6 +4,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,12 +15,13 @@ import java.util.stream.Collectors;
 public class Sort implements Serializable {
     @Serial
     private static final long serialVersionUID = -7445270943868879346L;
-    private static final Sort UNSORTED = Sort.by(new Order[0]);
+    private static final Sort UNSORTED = new Sort();
     private static final Direction DEFAULT_DIRECTION = Direction.ASC;
 
     private List<Order> orders;
 
     protected Sort() {
+        this.orders = Collections.emptyList();
     }
 
     protected Sort(List<Order> orders) {
@@ -27,37 +29,43 @@ public class Sort implements Serializable {
     }
 
     protected Sort(Direction direction, List<String> properties) {
-
         if (properties == null || properties.isEmpty()) {
             throw new IllegalArgumentException("You have to provide at least one property to sort by!");
         }
-
         this.orders = properties.stream()
-                .map(it -> new Order(direction, it))
+                .map(property -> new Order(direction, property))
                 .collect(Collectors.toList());
     }
 
-    public static Sort by(String... properties) {
-        return properties == null || properties.length == 0
-                ? Sort.unsorted()
-                : new Sort(DEFAULT_DIRECTION, Arrays.asList(properties));
+    public static Sort by(String property) {
+        return new Sort(Collections.singletonList(new Order(property)));
     }
 
-    public static Sort by(List<Order> orders) {
-        return orders == null || orders.isEmpty() ? Sort.unsorted() : new Sort(orders);
+    public static Sort by(String... properties) {
+        return by(DEFAULT_DIRECTION, properties);
+    }
+
+    public static Sort by(Direction direction, String... properties) {
+        if (properties == null || properties.length == 0) {
+            return Sort.unsorted();
+        }
+        List<Order> orders = new ArrayList<>(properties.length);
+        for (String property : properties) {
+            orders.add(new Order(direction, property));
+        }
+        return new Sort(orders);
+    }
+
+    public static Sort by(Order order) {
+        return new Sort(Collections.singletonList(order));
     }
 
     public static Sort by(Order... orders) {
         return orders == null || orders.length == 0 ? Sort.unsorted() : new Sort(Arrays.asList(orders));
     }
 
-    public static Sort by(Direction direction, String... properties) {
-        if (properties == null) {
-            return Sort.unsorted();
-        }
-        return Sort.by(Arrays.stream(properties)
-                .map(it -> new Order(direction, it))
-                .collect(Collectors.toList()));
+    public static Sort by(List<Order> orders) {
+        return orders == null || orders.isEmpty() ? Sort.unsorted() : new Sort(orders);
     }
 
     public static Sort unsorted() {
@@ -65,7 +73,7 @@ public class Sort implements Serializable {
     }
 
     public static Sort parse(String value) {
-        if (value == null || value.isEmpty()) {
+        if (value == null || value.isBlank()) {
             return Sort.unsorted();
         }
         if (value.indexOf(',') > 0) {

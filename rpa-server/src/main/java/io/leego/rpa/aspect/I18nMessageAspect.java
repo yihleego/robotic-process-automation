@@ -12,10 +12,10 @@ import org.springframework.util.StringUtils;
  */
 @Aspect
 @Component
-public class HttpServletAspect {
+public class I18nMessageAspect {
     private final MessageConverter messageConverter;
 
-    public HttpServletAspect(MessageConverter messageConverter) {
+    public I18nMessageAspect(MessageConverter messageConverter) {
         this.messageConverter = messageConverter;
     }
 
