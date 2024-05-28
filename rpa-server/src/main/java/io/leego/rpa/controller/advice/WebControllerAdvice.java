@@ -1,4 +1,4 @@
-package io.leego.rpa.advice;
+package io.leego.rpa.controller.advice;
 
 import io.leego.rpa.converter.MessageConverter;
 import io.leego.rpa.util.Result;
