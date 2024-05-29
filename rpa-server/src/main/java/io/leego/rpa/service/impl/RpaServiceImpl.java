@@ -93,7 +93,8 @@ public class RpaServiceImpl implements RpaService {
         QPredicate predicate = QPredicate.create()
                 .and(QApp.app.id::in, dto.getIds())
                 .and(QApp.app.name::startsWith, dto.getName())
-                .and(QApp.app.createdTime::between, dto.getBeginCreatedTime(), dto.getEndCreatedTime());
+                .and(QApp.app.createdTime::between, dto.getBeginCreatedTime(), dto.getEndCreatedTime())
+                .and(QApp.app.status::eq, AppStatus.ENABLED.getCode());
         return Result.buildSuccess(appRepository.findAll(predicate, dto).map(this::toVO));
     }
 
@@ -129,7 +130,8 @@ public class RpaServiceImpl implements RpaService {
                 .and(QUser.user.nickname::startsWith, dto.getNickname())
                 .and(QUser.user.realname::startsWith, dto.getRealname())
                 .and(QUser.user.company::startsWith, dto.getCompany())
-                .and(QUser.user.createdTime::between, dto.getBeginCreatedTime(), dto.getEndCreatedTime());
+                .and(QUser.user.createdTime::between, dto.getBeginCreatedTime(), dto.getEndCreatedTime())
+                .and(QUser.user.status::eq, UserStatus.ENABLED.getCode());
         return Result.buildSuccess(userRepository.findAll(predicate, dto).map(this::toVO));
     }
 
@@ -314,7 +316,7 @@ public class RpaServiceImpl implements RpaService {
     }
 
     @Override
-    public Result<Map<String, List<Option<Object, Object>>>> listConstants() {
+    public Result<Map<String, List<Option<Object, Object>>>> listEnums() {
         return Result.buildSuccess(Map.of(
                 AppStatus.class.getSimpleName(), Option.of(AppStatus.values(), AppStatus::getCode, o -> messageConverter.convert(o.getName())),
                 UserStatus.class.getSimpleName(), Option.of(UserStatus.values(), UserStatus::getCode, o -> messageConverter.convert(o.getName())),
