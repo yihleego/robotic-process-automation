@@ -1,0 +1,24 @@
+{
+  "name": "lokalise-vue",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@intlify/unplugin-vue-i18n": "^1.4.0",
+    "firebase": "^10.4.0",
+    "vue": "^3.4.27",
+    "vue-i18n": "^9.13.1",
+    "vue-router": "^4.1.6",
+    "vuetify": "^3.6.7",
+    "axios": "^0.24.0",
+    "@mdi/font": "^6.2.95"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.0.0",
+    "vite": "^4.0.0"
+  }
+}

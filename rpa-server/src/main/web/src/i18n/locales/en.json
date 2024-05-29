@@ -1,0 +1,20 @@
+{
+  "locale": {
+    "en": "English",
+    "zhHans": "Simplified Chinese"
+  },
+  "nav": {
+    "title": "Robotic Process Automation",
+    "doc": "Documentation",
+    "issues": "Issues"
+  },
+  "home": {
+    "header": "Welcome to the Vue 3 I18n tutorial!",
+    "created_by": "This tutorial was brought to you by {company}.",
+    "num_visits": "This page hasn't been visited :( | This page has been visited {n} time | This page has been visited {n} times"
+  },
+  "about": {
+    "header": "About us",
+    "donations": "Donations raised: {donations}"
+  }
+}
