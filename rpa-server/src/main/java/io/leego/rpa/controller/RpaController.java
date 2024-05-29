@@ -3,6 +3,7 @@ package io.leego.rpa.controller;
 import io.leego.rpa.pojo.dto.AppQueryDTO;
 import io.leego.rpa.pojo.dto.AppSaveDTO;
 import io.leego.rpa.pojo.dto.ClientQueryDTO;
+import io.leego.rpa.pojo.dto.FuncQueryDTO;
 import io.leego.rpa.pojo.dto.TaskDeleteDTO;
 import io.leego.rpa.pojo.dto.TaskQueryDTO;
 import io.leego.rpa.pojo.dto.TaskSaveDTO;
@@ -10,10 +11,10 @@ import io.leego.rpa.pojo.dto.UserQueryDTO;
 import io.leego.rpa.pojo.dto.UserSaveDTO;
 import io.leego.rpa.pojo.vo.AppVO;
 import io.leego.rpa.pojo.vo.ClientVO;
+import io.leego.rpa.pojo.vo.FuncVO;
 import io.leego.rpa.pojo.vo.TaskVO;
 import io.leego.rpa.pojo.vo.UserVO;
 import io.leego.rpa.service.RpaService;
-import io.leego.rpa.util.Option;
 import io.leego.rpa.util.Page;
 import io.leego.rpa.util.Result;
 import org.springframework.validation.annotation.Validated;
@@ -25,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Leego Yih
@@ -39,7 +39,7 @@ public class RpaController {
     }
 
     @GetMapping("apps/{id}")
-    public Result<AppVO> getApp(@PathVariable String id) {
+    public Result<AppVO> getApp(@PathVariable("id") String id) {
         return rpaService.getApp(id);
     }
 
@@ -54,7 +54,7 @@ public class RpaController {
     }
 
     @GetMapping("users/{id}")
-    public Result<UserVO> getUser(@PathVariable String id) {
+    public Result<UserVO> getUser(@PathVariable("id") Long id) {
         return rpaService.getUser(id);
     }
 
@@ -69,7 +69,7 @@ public class RpaController {
     }
 
     @GetMapping("tasks/{id}")
-    public Result<TaskVO> getTask(@PathVariable String id) {
+    public Result<TaskVO> getTask(@PathVariable("id") Long id) {
         return rpaService.getTask(id);
     }
 
@@ -93,14 +93,8 @@ public class RpaController {
         return rpaService.listClients(dto);
     }
 
-    @GetMapping("tasks/types")
-    public Result<Map<String, List<Option<String, String>>>> listTaskTypes() {
-        return rpaService.listTaskTypes();
+    @GetMapping("funcs")
+    public Result<List<FuncVO>> listFuncs(@Validated FuncQueryDTO dto) {
+        return rpaService.listFuncs(dto);
     }
-
-    @GetMapping("constants")
-    public Result<Map<String, List<Option<Object, Object>>>> listConstants() {
-        return rpaService.listConstants();
-    }
-
 }

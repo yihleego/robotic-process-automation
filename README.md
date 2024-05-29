@@ -350,7 +350,6 @@ values ('tid', 'uid', 'wechat', 'login', 0, null, 0, now(), null, '2022-01-01 10
 
 | Property | Type      | Required | Description |
 |:---------|:----------|:---------|:------------|
-| target   | String    | 必填       | 群名称。        |
 | contacts | Contact[] | 必填       | 联系人对象数组。    |
 | └ target | String    | 必填       | 用户手机号码或邮箱。  |
 | └ reason | String    | 可选       | 添加联系人备注。    |

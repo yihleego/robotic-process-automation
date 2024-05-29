@@ -22,5 +22,6 @@ public class AppSaveDTO {
         private String id;
         @NotEmpty(message = Messages.APP_NAME_INVALID)
         private String name;
+        private String logo;
     }
 }

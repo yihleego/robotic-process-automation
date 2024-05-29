@@ -1,0 +1,82 @@
+{
+  "locale": {
+    "en": "英语",
+    "zhHans": "简体中文"
+  },
+  "nav": {
+    "title": "机器人流程自动化",
+    "doc": "相关文档",
+    "issues": "错误报告"
+  },
+  "common": {
+    "add": "新建",
+    "search": "搜索",
+    "close": "关闭",
+    "execute": "执行",
+    "run": "运行",
+    "running": "运行中",
+    "result": "结果"
+  },
+  "app": {
+    "list": "应用列表",
+    "name": "应用名称",
+    "logo": "应用图标",
+    "wechat": "微信",
+    "wecom": "企业微信",
+    "qq": "腾讯QQ",
+    "dingtalk": "钉钉",
+    "lark": "飞书"
+  },
+  "task": {
+    "dialog": {
+      "title": "运行任务",
+      "type": "任务类型",
+      "data": "任务数据"
+    },
+    "type": {
+      "login": "登录",
+      "logout": "退出登录",
+      "send_private_messages": "发送个人消息",
+      "send_group_messages": "发送群消息",
+      "add_contacts": "添加联系人",
+      "post_moments": "发朋友圈"
+    },
+    "status": {
+      "created": "已创建",
+      "running": "运行中",
+      "deleted": "已删除",
+      "cancelled": "已取消",
+      "finished": "已完成",
+      "failed": "失败",
+      "timeout": "超时",
+      "offline": "客户端不在线",
+      "terminated": "已终止",
+      "unsupported": "不支持"
+    },
+    "key": {
+      "username": "用户名",
+      "password": "密码",
+      "target": "接收人",
+      "content": "消息内容",
+      "type": "消息类型",
+      "text": "文本",
+      "image": "图片",
+      "video": "视频",
+      "file": "文件",
+      "mention": "提醒"
+    }
+  },
+  "user": {
+    "id": "ID",
+    "account": "账号",
+    "nickname": "昵称",
+    "realname": "姓名",
+    "company": "公司",
+    "phone": "手机号码",
+    "avatar": "头像",
+    "status": "状态",
+    "createdTime": "创建时间",
+    "updatedTime": "更新时间",
+    "actions": "操作"
+  }
+}

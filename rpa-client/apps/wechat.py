@@ -10,7 +10,7 @@ from apps.app import UiaApp, AppConfig, AppUser, MessageType
 class WeChat(UiaApp):
     def __init__(self, handle: int, process: int = None, status: int = None, user=None):
         super().__init__(handle, process, status, user)
-        self.version = "3.5.0.46"
+        self.version = "3.9.10.27"
 
     @staticmethod
     def config():
@@ -148,12 +148,8 @@ class WeChat(UiaApp):
             if type == MessageType.TEXT:
                 input_box.type_keys(content, with_spaces=True, with_tabs=True, with_newlines=True)
             elif type == MessageType.IMAGE or type == MessageType.VIDEO or type == MessageType.FILE:
-                self.copy(file_paths[content])
-                file_button = wechat_window.child_window(control_type='Button', title='发送文件')
-                file_button.click_input()
-                file_name_edit = wechat_window.child_window(control_type='Edit', title='文件名(N):')
-                file_name_edit.type_keys('^a^v')
-                file_name_edit.type_keys('{ENTER}')
+                self.copy_file(file_paths[content])
+                input_box.type_keys("^v")
             elif type == MessageType.MENTION:
                 input_box.type_keys('@')
                 input_box.type_keys(content, with_spaces=True, with_tabs=True, with_newlines=True)

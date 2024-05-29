@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * @author Leego Yih
  */
-public interface DictRepository extends JpaRepository<Dict, Void>, QuerydslRepository<Dict> {
+public interface DictRepository extends JpaRepository<Dict, Long>, QuerydslRepository<Dict> {
 
     List<Dict> findByTypeIn(List<String> type);
 

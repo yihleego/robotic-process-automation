@@ -1,0 +1,82 @@
+{
+  "locale": {
+    "en": "English",
+    "zhHans": "Simplified Chinese"
+  },
+  "nav": {
+    "title": "Robotic Process Automation",
+    "doc": "Documentation",
+    "issues": "Issues"
+  },
+  "common": {
+    "add": "Add",
+    "search": "Search",
+    "close": "Close",
+    "execute": "Execute",
+    "run": "Run",
+    "running": "Running",
+    "result": "Result"
+  },
+  "app": {
+    "list": "Apps",
+    "name": "Name",
+    "logo": "Logo",
+    "wechat": "WeChat",
+    "wecom": "WeCom",
+    "qq": "QQ",
+    "dingtalk": "DingTalk",
+    "lark": "Lark"
+  },
+  "task": {
+    "dialog": {
+      "title": "Run task",
+      "type": "Type",
+      "data": "Data"
+    },
+    "type": {
+      "login": "Login",
+      "logout": "Logout",
+      "send_private_messages": "Send Private Messages",
+      "send_group_messages": "Send Group Messages",
+      "add_contacts": "Add Contacts",
+      "post_moments": "Post Moments"
+    },
+    "status": {
+      "created": "Created",
+      "running": "Running",
+      "deleted": "Deleted",
+      "cancelled": "Cancelled",
+      "finished": "Finished",
+      "failed": "Failed",
+      "timeout": "Timeout",
+      "offline": "Offline",
+      "terminated": "Terminated",
+      "unsupported": "Unsupported"
+    },
+    "key": {
+      "username": "Username",
+      "password": "Password",
+      "target": "Recipient",
+      "content": "Content",
+      "type": "Type",
+      "text": "Text",
+      "image": "Image",
+      "video": "Video",
+      "file": "File",
+      "mention": "Mention"
+    }
+  },
+  "user": {
+    "id": "ID",
+    "account": "Account",
+    "nickname": "Nickname",
+    "realname": "Realname",
+    "company": "Company",
+    "phone": "Phone",
+    "avatar": "Avatar",
+    "status": "Status",
+    "createdTime": "Created Time",
+    "updatedTime": "Updated Time",
+    "actions": "Actions"
+  }
+}

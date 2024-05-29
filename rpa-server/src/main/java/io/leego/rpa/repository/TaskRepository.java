@@ -14,29 +14,29 @@ import java.util.List;
 /**
  * @author Leego Yih
  */
-public interface TaskRepository extends JpaRepository<Task, String>, QuerydslRepository<Task> {
+public interface TaskRepository extends JpaRepository<Task, Long>, QuerydslRepository<Task> {
 
     @Nullable
     Task findFirstByTypeAndStatusAndScheduleTimeLessThanEqualOrderByPriorityAscScheduleTimeAsc(String type, Integer status, LocalDateTime scheduleTime);
 
     @Nullable
-    Task findFirstByUserIdInAndTypeNotAndStatusAndScheduleTimeLessThanEqualOrderByPriorityAscScheduleTimeAsc(List<String> userIds, String type, Integer status, LocalDateTime scheduleTime);
+    Task findFirstByUserIdInAndTypeNotAndStatusAndScheduleTimeLessThanEqualOrderByPriorityAscScheduleTimeAsc(List<Long> userIds, String type, Integer status, LocalDateTime scheduleTime);
 
     @Transactional
     @Modifying
     @Query("update Task set status = :newStatus where id = :id and status = :oldStatus")
-    int updateStatus(@Param("id") String id, @Param("oldStatus") Integer oldStatus, @Param("newStatus") Integer newStatus);
+    int updateStatus(@Param("id") Long id, @Param("oldStatus") Integer oldStatus, @Param("newStatus") Integer newStatus);
 
     @Transactional
     @Modifying
     @Query("update Task set status = :newStatus, executedTime = :#{T(java.time.LocalDateTime).now()} where id = :id and status = :oldStatus")
-    int updateStatusAndExecuted(@Param("id") String id, @Param("oldStatus") Integer oldStatus, @Param("newStatus") Integer newStatus);
+    int updateStatusAndExecuted(@Param("id") Long id, @Param("oldStatus") Integer oldStatus, @Param("newStatus") Integer newStatus);
 
     @Transactional
     @Modifying
     @Query("update Task set status = :newStatus, message = :message, result = :result, finishedTime = :#{T(java.time.LocalDateTime).now()} where id = :id and status = :oldStatus")
-    int updateStatusAndFinished(@Param("id") String id, @Param("oldStatus") Integer oldStatus, @Param("newStatus") Integer newStatus, @Nullable @Param("message") String message, @Nullable @Param("result") String result);
+    int updateStatusAndFinished(@Param("id") Long id, @Param("oldStatus") Integer oldStatus, @Param("newStatus") Integer newStatus, @Nullable @Param("message") String message, @Nullable @Param("result") String result);
 
-    boolean existsByIdIn(List<String> ids);
+    boolean existsByIdIn(List<Long> ids);
 
 }

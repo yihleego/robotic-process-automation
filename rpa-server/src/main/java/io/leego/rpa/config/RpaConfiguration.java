@@ -38,6 +38,8 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -120,6 +122,17 @@ public class RpaConfiguration {
                                 .addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(dateTimeFormatter))
                                 .addDeserializer(LocalDate.class, new LocalDateDeserializer(dateFormatter))
                                 .addDeserializer(LocalTime.class, new LocalTimeDeserializer(timeFormatter)));
+    }
+
+    @Configuration
+    public static class WebMvcConfiguration implements WebMvcConfigurer {
+        @Override
+        public void addCorsMappings(CorsRegistry registry) {
+            registry.addMapping("/**")
+                    .allowedOriginPatterns("*")
+                    .allowCredentials(true)
+                    .allowedMethods("*");
+        }
     }
 
     @Configuration

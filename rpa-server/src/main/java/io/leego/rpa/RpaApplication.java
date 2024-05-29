@@ -1,5 +1,6 @@
 package io.leego.rpa;
 
+import io.leego.rpa.config.RpaProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -16,9 +17,14 @@ public class RpaApplication {
 
     public static void main(String[] args) {
         ApplicationContext ctx = SpringApplication.run(RpaApplication.class, args);
+        printInfo(ctx);
+    }
+
+    private static void printInfo(ApplicationContext ctx) {
         Environment env = ctx.getBean(Environment.class);
-        Integer port = env.getProperty("local.server.port", Integer.class, 8080);
-        logger.info("Console URL: {}", String.format("http://localhost:%s/index.html", port));
+        RpaProperties conf = ctx.getBean(RpaProperties.class);
+        logger.info("Console URL: {}", String.format("http://localhost:%s", env.getProperty("local.server.port", Integer.class)));
+        logger.info("WebSocket: {}", String.format("ws://localhost:%s%s", conf.getWebsocket().getPort(), conf.getWebsocket().getPath()));
     }
 
 }
