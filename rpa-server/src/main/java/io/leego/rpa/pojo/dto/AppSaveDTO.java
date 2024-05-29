@@ -18,8 +18,9 @@ public class AppSaveDTO {
 
     @Data
     public static class AppDTO {
-        @NotEmpty(message = Messages.APP_ID_INVALID)
-        private String id;
+        private Long id;
+        @NotEmpty(message = Messages.APP_CODE_INVALID)
+        private String code;
         @NotEmpty(message = Messages.APP_NAME_INVALID)
         private String name;
     }

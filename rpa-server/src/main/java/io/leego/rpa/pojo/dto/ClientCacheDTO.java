@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ClientCacheDTO {
-    private String appId;
+    private String appCode;
     private String account;
     private Integer status;
     private Integer handle;

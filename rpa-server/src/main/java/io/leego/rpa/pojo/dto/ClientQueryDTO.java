@@ -14,6 +14,6 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class ClientQueryDTO extends PageRequest {
-    @NotEmpty(message = Messages.APP_ID_INVALID)
-    private List<String> appIds;
+    @NotEmpty(message = Messages.APP_CODE_INVALID)
+    private List<String> appCodes;
 }

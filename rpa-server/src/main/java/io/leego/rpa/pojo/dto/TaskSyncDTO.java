@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TaskSyncDTO {
-    private String taskId;
+    private Long taskId;
     private Integer status;
     private String message;
     private String result;

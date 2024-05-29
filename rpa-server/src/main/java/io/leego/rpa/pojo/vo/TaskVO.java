@@ -1,6 +1,8 @@
 package io.leego.rpa.pojo.vo;
 
+import io.leego.rpa.entity.Task;
 import lombok.Data;
+import org.springframework.beans.BeanUtils;
 
 import java.time.LocalDateTime;
 
@@ -9,9 +11,9 @@ import java.time.LocalDateTime;
  */
 @Data
 public class TaskVO {
-    private String id;
-    private String appId;
-    private String userId;
+    private Long id;
+    private Long appId;
+    private Long userId;
     private String type;
     private Integer status;
     private Integer priority;
@@ -23,4 +25,10 @@ public class TaskVO {
     private LocalDateTime finishedTime;
     private LocalDateTime createdTime;
     private LocalDateTime updatedTime;
+
+    public static TaskVO from(Task task) {
+        TaskVO vo = new TaskVO();
+        BeanUtils.copyProperties(task, vo);
+        return vo;
+    }
 }

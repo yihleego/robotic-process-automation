@@ -23,9 +23,9 @@ import java.time.LocalDateTime;
 @Table(name = "task")
 public class Task extends BaseEntity {
     @Column(nullable = false, updatable = false)
-    private String appId;
+    private Long appId;
     @Column(nullable = false, updatable = false)
-    private String userId;
+    private Long userId;
     @Column(nullable = false, updatable = false)
     private String type;
     private Integer status;

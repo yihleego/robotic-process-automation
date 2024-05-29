@@ -19,6 +19,7 @@ import lombok.experimental.FieldNameConstants;
 @Entity
 @Table(name = "app")
 public class App extends BaseEntity {
+    private String code;
     private String name;
     private Integer status;
 }

@@ -14,6 +14,7 @@ public final class Messages {
     public static final String APP_DISABLED = "app.disabled";
     public static final String APP_INVALID = "app.invalid";
     public static final String APP_ID_INVALID = "app.id.invalid";
+    public static final String APP_CODE_INVALID = "app.code.invalid";
     public static final String APP_NAME_INVALID = "app.name.invalid";
     /** User */
     public static final String USER_ABSENT = "user.absent";

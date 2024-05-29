@@ -1,6 +1,8 @@
 package io.leego.rpa.pojo.dto;
 
 import io.leego.rpa.constant.Messages;
+import io.leego.rpa.entity.BaseEntity;
+import io.leego.rpa.entity.User;
 import io.leego.rpa.util.PageRequest;
 import io.leego.rpa.validation.Paged;
 import io.leego.rpa.validation.Sorted;
@@ -17,25 +19,19 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Paged(message = Messages.PAGE_INVALID)
 @Sorted(properties = {
-        UserQueryDTO.ID,
-        UserQueryDTO.APP_ID,
-        UserQueryDTO.ACCOUNT,
-        UserQueryDTO.CREATED_TIME,
-        UserQueryDTO.UPDATED_TIME},
+        BaseEntity.Fields.id,
+        BaseEntity.Fields.createdTime,
+        BaseEntity.Fields.updatedTime,
+        User.Fields.appId,
+        User.Fields.account},
         message = Messages.SORT_INVALID)
 public class UserQueryDTO extends PageRequest {
-    private List<String> ids;
-    private List<String> appIds;
+    private List<Long> ids;
+    private List<Long> appIds;
     private String account;
     private String nickname;
     private String realname;
     private String company;
     private LocalDateTime beginCreatedTime;
     private LocalDateTime endCreatedTime;
-
-    public static final String ID = "id";
-    public static final String APP_ID = "appId";
-    public static final String ACCOUNT = "account";
-    public static final String CREATED_TIME = "createdTime";
-    public static final String UPDATED_TIME = "updatedTime";
 }

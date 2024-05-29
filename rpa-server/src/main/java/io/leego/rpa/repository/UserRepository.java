@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * @author Leego Yih
  */
-public interface UserRepository extends JpaRepository<User, String>, QuerydslRepository<User> {
+public interface UserRepository extends JpaRepository<User, Long>, QuerydslRepository<User> {
 
     List<User> findByAccountIn(List<String> accounts);
 

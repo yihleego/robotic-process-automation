@@ -12,5 +12,5 @@ import java.util.List;
 @Data
 public class TaskDeleteDTO {
     @NotEmpty(message = Messages.TASK_ID_INVALID)
-    private List<String> ids;
+    private List<Long> ids;
 }

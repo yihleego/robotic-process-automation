@@ -1,12 +1,12 @@
 package io.leego.rpa.entity;
 
-import io.leego.rpa.util.UniqueId;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PostLoad;
-import jakarta.persistence.PrePersist;
 import jakarta.persistence.Transient;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
@@ -24,9 +24,10 @@ import java.time.LocalDateTime;
 @FieldNameConstants
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public abstract class BaseEntity implements Persistable<String> {
+public abstract class BaseEntity implements Persistable<Long> {
     @Id
-    protected String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    protected Long id;
     @CreatedDate
     @Column(nullable = false, updatable = false)
     protected LocalDateTime createdTime;
@@ -51,13 +52,6 @@ public abstract class BaseEntity implements Persistable<String> {
     @PostLoad
     void postLoad() {
         this._new = false;
-    }
-
-    @PrePersist
-    void prePersist() {
-        if (this.id == null) {
-            this.id = UniqueId.next().toString();
-        }
     }
 
     public void makeInsertable() {

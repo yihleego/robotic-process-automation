@@ -21,7 +21,7 @@ import lombok.experimental.FieldNameConstants;
 @Table(name = "user")
 public class User extends BaseEntity {
     @Column(nullable = false, updatable = false)
-    private String appId;
+    private Long appId;
     @Column(nullable = false)
     private String account;
     private String nickname;

@@ -1,6 +1,8 @@
 package io.leego.rpa.pojo.vo;
 
+import io.leego.rpa.entity.User;
 import lombok.Data;
+import org.springframework.beans.BeanUtils;
 
 import java.time.LocalDateTime;
 
@@ -9,8 +11,8 @@ import java.time.LocalDateTime;
  */
 @Data
 public class UserVO {
-    private String id;
-    private String appId;
+    private Long id;
+    private Long appId;
     private String account;
     private String nickname;
     private String realname;
@@ -20,4 +22,10 @@ public class UserVO {
     private Integer status;
     private LocalDateTime createdTime;
     private LocalDateTime updatedTime;
+
+    public static UserVO from(User user) {
+        UserVO vo = new UserVO();
+        BeanUtils.copyProperties(user, vo);
+        return vo;
+    }
 }

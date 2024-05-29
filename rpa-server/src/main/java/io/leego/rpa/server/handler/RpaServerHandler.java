@@ -136,7 +136,7 @@ public class RpaServerHandler extends ChannelInboundHandlerAdapter {
         List<ClientCacheDTO> clients = new ArrayList<>();
         for (ClientDTO client : dto.getClients()) {
             ClientStatus clientStatus = ClientStatus.get(client.getStatus());
-            if (!StringUtils.hasText(client.getAppId()) || clientStatus == null) {
+            if (!StringUtils.hasText(client.getAppCode()) || clientStatus == null) {
                 logger.error("Invalid client: {}", client);
                 continue;
             }
@@ -144,7 +144,7 @@ public class RpaServerHandler extends ChannelInboundHandlerAdapter {
                 logger.debug("Offline client: {}", client);
                 continue;
             }
-            clients.add(new ClientCacheDTO(client.getAppId(), client.getAccount(), client.getStatus(), client.getHandle(), client.getProcess(), client.getStartedTime(), client.getOnlineTime(), address));
+            clients.add(new ClientCacheDTO(client.getAppCode(), client.getAccount(), client.getStatus(), client.getHandle(), client.getProcess(), client.getStartedTime(), client.getOnlineTime(), address));
         }
         Set<String> newKeys = clients.stream().map(this::buildClientKey).collect(Collectors.toSet());
         Set<String> oldKeys = getAttr(context, Constants.CLIENT_CACHE_KEYS);
@@ -219,7 +219,7 @@ public class RpaServerHandler extends ChannelInboundHandlerAdapter {
                         continue;
                     }
                     String address = String.valueOf(getAddress(context));
-                    ClientCacheDTO cache = new ClientCacheDTO(user.getAppId(), user.getAccount(), ClientStatus.WAITING.getCode(), null, null, null, null, address);
+                    ClientCacheDTO cache = new ClientCacheDTO(app.getCode(), user.getAccount(), ClientStatus.WAITING.getCode(), null, null, null, null, address);
                     Boolean success = redisTemplate.opsForValue().setIfAbsent(buildClientKey(cache), cache, rpaProperties.getClient().getCacheTimeout());
                     if (success == null || !success) {
                         logger.error("Failed to set client status, task: {}, user: {}", task, user);
@@ -249,11 +249,14 @@ public class RpaServerHandler extends ChannelInboundHandlerAdapter {
             logger.debug("No user found");
             return;
         }
+        // account -> app_code
         Map<String, Set<String>> clientMap = dto.getClients().stream()
                 .filter(o -> StringUtils.hasText(o.getAccount()) && Objects.equals(o.getStatus(), ClientStatus.ONLINE.getCode()))
-                .collect(Collectors.groupingBy(ClientDTO::getAccount, Collectors.mapping(ClientDTO::getAppId, Collectors.toSet())));
-        List<String> userIds = users.stream()
-                .filter(user -> clientMap.getOrDefault(user.getAccount(), Collections.emptySet()).contains(user.getAppId()))
+                .collect(Collectors.groupingBy(ClientDTO::getAccount, Collectors.mapping(ClientDTO::getAppCode, Collectors.toSet())));
+        // app_id -> app_code
+        Map<Long, String> appMap = appRepository.findAll().stream().collect(Collectors.toMap(BaseEntity::getId, App::getCode));
+        List<Long> userIds = users.stream()
+                .filter(user -> clientMap.getOrDefault(user.getAccount(), Collections.emptySet()).contains(appMap.get(user.getAppId())))
                 .map(BaseEntity::getId)
                 .collect(Collectors.toList());
         if (CollectionUtils.isEmpty(userIds)) {
@@ -273,7 +276,7 @@ public class RpaServerHandler extends ChannelInboundHandlerAdapter {
     }
 
     private String buildClientKey(ClientCacheDTO cache) {
-        return rpaProperties.getClient().getCacheKey() + cache.getAppId() + ":" + cache.getAccount();
+        return rpaProperties.getClient().getCacheKey() + cache.getAppCode() + ":" + cache.getAccount();
     }
 
     @SuppressWarnings("unchecked")
