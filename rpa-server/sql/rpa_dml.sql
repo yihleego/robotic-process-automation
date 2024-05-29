@@ -1,11 +1,11 @@
 # MySQL
 insert into app(id, name, status, created_time)
 values ('wechat', '微信', 1, now()),
-       ('wecom', '企业微信', 1, now()),
-       ('qq', '腾讯QQ', 1, now()),
-       ('tim', 'TIM', 1, now()),
-       ('dingtalk', '钉钉', 1, now()),
-       ('lark', '飞书', 1, now());
+       ('wecom', '企业微信', 1, now() + 1),
+       ('qq', '腾讯QQ', 1, now() + 2),
+       ('tim', 'TIM', 1, now() + 3),
+       ('dingtalk', '钉钉', 1, now() + 4),
+       ('lark', '飞书', 1, now() + 5);
 
 insert into dict(`type`, `key`, `value`, `remark`, `order`)
 values ('task_type:wechat', 'login', '0', 'Login', 0),

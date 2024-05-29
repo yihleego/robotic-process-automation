@@ -8,13 +8,28 @@
     "doc": "Documentation",
     "issues": "Issues"
   },
-  "home": {
-    "header": "Welcome to the Vue 3 I18n tutorial!",
-    "created_by": "This tutorial was brought to you by {company}.",
-    "num_visits": "This page hasn't been visited :( | This page has been visited {n} time | This page has been visited {n} times"
+  "common": {
+    "search": "Search"
   },
-  "about": {
-    "header": "About us",
-    "donations": "Donations raised: {donations}"
+  "app": {
+    "list": "Apps",
+    "wechat": "WeChat",
+    "wecom": "WeCom",
+    "qq": "QQ",
+    "dingtalk": "DingTalk",
+    "lark": "Lark"
+  },
+  "user": {
+    "id": "ID",
+    "account": "Account",
+    "nickname": "Nickname",
+    "realname": "Realname",
+    "company": "Company",
+    "phone": "Phone",
+    "avatar": "Avatar",
+    "status": "Status",
+    "createdTime": "Created Time",
+    "updatedTime": "Updated Time",
+    "actions": "Actions"
   }
 }

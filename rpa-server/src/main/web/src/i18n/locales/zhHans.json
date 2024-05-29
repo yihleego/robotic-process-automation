@@ -8,13 +8,28 @@
     "doc": "相关文档",
     "issues": "错误报告"
   },
-  "home": {
-    "header": "Добро пожаловать в руководство Vue 3 I18n!",
-    "created_by": "Это руководство создано для вас компанией {company}.",
-    "num_visits": "Страницу не посещали :( | Страницу посетили {n} раз | Страницу посетили {n} раза | Страницу посетили {n} раз"
+  "common": {
+    "search": "搜索"
   },
-  "about": {
-    "header": "О нас",
-    "donations": "Пожертвований собрано: {donations}"
+  "app": {
+    "list": "应用列表",
+    "wechat": "微信",
+    "wecom": "企业微信",
+    "qq": "腾讯QQ",
+    "dingtalk": "钉钉",
+    "lark": "飞书"
+  },
+  "user": {
+    "id": "ID",
+    "account": "账号",
+    "nickname": "昵称",
+    "realname": "姓名",
+    "company": "公司",
+    "phone": "手机号码",
+    "avatar": "头像",
+    "status": "状态",
+    "createdTime": "创建时间",
+    "updatedTime": "更新时间",
+    "actions": "操作"
   }
 }

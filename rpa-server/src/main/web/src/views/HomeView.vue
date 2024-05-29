@@ -4,9 +4,10 @@
       <v-container class="mx-auto d-flex align-center justify-center">
         <v-avatar
             class="me-4 "
-            color="grey-darken-1"
             size="32"
-        ></v-avatar>
+        >
+          <v-img src="/logo.png" alt="RPA"></v-img>
+        </v-avatar>
 
         <v-btn
             v-for="link in links"
@@ -28,14 +29,20 @@
         <v-row>
           <v-col cols="2">
             <v-sheet rounded="lg">
-              <v-list rounded="lg">
+              <v-list density="compact">
+                <v-list-subheader>{{ $t('app.list') }}</v-list-subheader>
                 <v-list-item
                     v-for="app in app.list"
                     :key="app.id"
-                    :title="app.name"
-                    class="text-center"
-                    link
-                ></v-list-item>
+                    :value="app.name"
+                    @click="selectApp(app)"
+                >
+                  <template v-slot:prepend>
+                    <v-icon :class="'icon-'+app.id"></v-icon>
+                  </template>
+
+                  <v-list-item-title v-text="$t(`app.${app.id}`)"></v-list-item-title>
+                </v-list-item>
               </v-list>
             </v-sheet>
           </v-col>
@@ -45,12 +52,53 @@
                 min-height="70vh"
                 rounded="lg"
             >
-              <v-data-table
-                  :items="user.list"
-                  :server-items-length="user.total"
-                  :loading="user.loading" loading-text="Loading..."
+              <v-card
+                  flat
               >
-              </v-data-table>
+                <template v-slot:text>
+                  <v-container>
+                    <v-row>
+                      <v-col
+                          v-for="header in user.headers.filter(o => o.queryable)"
+                      >
+                        <v-text-field
+                            v-model="user.query[header.key]"
+                            :label="header.title"
+                            variant="outlined"
+                            density="compact"
+                            clearable>
+                        </v-text-field>
+                      </v-col>
+                      <v-col>
+                        <v-btn @click="listUsers">{{ $t('common.search') }}</v-btn>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </template>
+
+                <v-data-table
+                    :headers="user.headers.filter(o => o.display)"
+                    :items="user.list"
+                    :server-items-length="user.total"
+                    :loading="user.loading"
+                    loading-text="Loading..."
+                    @update:options="listUsers"
+                    :options.sync="user.options"
+                    :items-per-page-options="user.options.itemsPerPageOptions"
+                    locale
+                >
+                  <template v-slot:item.avatar="{ item }">
+                    <v-avatar size="25">
+                      <v-img :src="item.avatar" :alt="item.nickname"></v-img>
+                    </v-avatar>
+                  </template>
+                  <template v-slot:item.actions="{ item }">
+                    <v-icon @click.stop="task.dialog=true; task.user=item; task.app=app">
+                      mdi-robot
+                    </v-icon>
+                  </template>
+                </v-data-table>
+              </v-card>
             </v-sheet>
           </v-col>
         </v-row>
@@ -70,9 +118,10 @@
 </template>
 
 <script>
-import LanguageSwitcher from "@/components/LanguageSwitcher.vue";
 import {useI18n} from 'vue-i18n'
+import LanguageSwitcher from "@/components/LanguageSwitcher.vue";
 import api from "@/api/api"
+import '../style.css'
 
 export default {
   components: {LanguageSwitcher},
@@ -98,25 +147,35 @@ export default {
     user: {
       list: [],
       total: 0,
-      query: {},
+      query: {
+        account: null,
+        nickname: null,
+        realname: null,
+        company: null,
+      },
       headers: [
-        {title: 'User Id', key: 'id', sortable: true, queryable: false, align: 'start'},
-        {title: 'Avatar', key: 'avatar', sortable: false, queryable: false},
-        {title: 'Account', key: 'account', sortable: true, queryable: true},
-        {title: 'Nickname', key: 'nickname', sortable: false, queryable: true},
-        {title: 'Realname', key: 'realname', sortable: false, queryable: true},
-        {title: 'Company', key: 'company', sortable: false, queryable: true},
-        {title: 'Phone', key: 'phone', sortable: false, queryable: true},
-        {title: 'Status', key: 'status', sortable: false, queryable: false},
-        {title: 'Created Time', key: 'createdTime', sortable: true, queryable: true},
-        {title: 'Updated Time', key: 'updatedTime', sortable: true, queryable: true},
-        {title: 'Actions', key: 'actions', sortable: false, queryable: false, align: 'center'},
+        {title: 'user.id', key: 'id', display: true, sortable: true, queryable: false, align: 'start'},
+        {title: 'user.avatar', key: 'avatar', display: true, sortable: false, queryable: false},
+        {title: 'user.account', key: 'account', display: true, sortable: true, queryable: true},
+        {title: 'user.nickname', key: 'nickname', display: true, sortable: false, queryable: true},
+        {title: 'user.realname', key: 'realname', display: true, sortable: false, queryable: true},
+        {title: 'user.company', key: 'company', display: true, sortable: false, queryable: true},
+        {title: 'user.phone', key: 'phone', display: true, sortable: false, queryable: false},
+        {title: 'user.status', key: 'status', display: false, sortable: false, queryable: false},
+        {title: 'user.createdTime', key: 'createdTime', display: true, sortable: true, queryable: false},
+        {title: 'user.updatedTime', key: 'updatedTime', display: true, sortable: true, queryable: false},
+        {title: 'user.actions', key: 'actions', display: true, sortable: false, queryable: false, align: 'center'},
       ],
       options: {
-        itemsPerPage: 10,
-        multiSort: false,
-        mustSort: false,
         page: 1,
+        itemsPerPage: 10,
+        itemsPerPageOptions: [
+          {value: 10, title: '10'},
+          {value: 25, title: '25'},
+          {value: 50, title: '50'},
+          {value: 100, title: '100'},
+        ],
+        multiSort: false,
         sortBy: ['createdTime'],
         sortDesc: [true],
       },
@@ -124,13 +183,23 @@ export default {
   }),
   created() {
     this.listApps()
+    this.user.headers.forEach(o => o.title = this.$t(`user.${o.key}`))
+  },
+  watch: {
+    locale() {
+      this.user.headers.forEach(o => o.title = this.$t(`user.${o.key}`))
+    },
   },
   methods: {
+    selectApp(app) {
+      this.curApp = app
+      this.listUsers()
+    },
     listApps() {
       let params = {
         page: 1,
         size: 100,
-        sort: 'name:ASC',
+        sort: 'createdTime:ASC',
       }
       api.listApps(params)
           .then((res) => {

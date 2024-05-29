@@ -1,5 +1,7 @@
 import i18n from "@/i18n"
-import { nextTick } from "vue"
+import vuetify from "@/vuetify"
+
+import {nextTick} from "vue"
 
 const Trans = {
   get defaultLocale() {
@@ -23,14 +25,15 @@ const Trans = {
     Trans.currentLocale = newLocale
     document.querySelector("html").setAttribute("lang", newLocale)
     localStorage.setItem("user-locale", newLocale)
+    vuetify.locale.current.value = newLocale;
   },
 
   async loadLocaleMessages(locale) {
-    if(!i18n.global.availableLocales.includes(locale)) {
+    if (!i18n.global.availableLocales.includes(locale)) {
       const messages = await import(`@/i18n/locales/${locale}.json`)
       i18n.global.setLocaleMessage(locale, messages.default)
     }
-    
+
     return nextTick()
   },
 
@@ -52,7 +55,7 @@ const Trans = {
   getPersistedLocale() {
     const persistedLocale = localStorage.getItem("user-locale")
 
-    if(Trans.isLocaleSupported(persistedLocale)) {
+    if (Trans.isLocaleSupported(persistedLocale)) {
       return persistedLocale
     } else {
       return null
@@ -61,7 +64,7 @@ const Trans = {
 
   guessDefaultLocale() {
     const userPersistedLocale = Trans.getPersistedLocale()
-    if(userPersistedLocale) {
+    if (userPersistedLocale) {
       return userPersistedLocale
     }
 
@@ -74,15 +77,15 @@ const Trans = {
     if (Trans.isLocaleSupported(userPreferredLocale.localeNoRegion)) {
       return userPreferredLocale.localeNoRegion
     }
-    
+
     return Trans.defaultLocale
   },
 
   async routeMiddleware(to, _from, next) {
-    const paramLocale = to.params.locale
+    let paramLocale = to.params.locale || Trans.getPersistedLocale()
 
-    if(!Trans.isLocaleSupported(paramLocale)) {
-      return next(Trans.guessDefaultLocale())
+    if (!Trans.isLocaleSupported(paramLocale)) {
+      return next(Trans.guessDefaultLocale());
     }
 
     await Trans.switchLanguage(paramLocale)

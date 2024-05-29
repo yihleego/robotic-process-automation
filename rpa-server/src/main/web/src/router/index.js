@@ -3,10 +3,10 @@ import HomeView from '../views/HomeView.vue'
 import Tr from "@/i18n/translation"
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.VITE_BASE_URL),
+  history: createWebHistory(import.meta.env.VITE_ROUTER_BASE_URL),
   routes: [
     {
-      path: "/:locale?",
+      path: "/",
       component: RouterView,
       beforeEnter: Tr.routeMiddleware,
       children: [
