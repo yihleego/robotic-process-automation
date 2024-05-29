@@ -98,9 +98,9 @@ public class RpaController {
         return rpaService.listTaskTypes();
     }
 
-    @GetMapping("constants")
-    public Result<Map<String, List<Option<Object, Object>>>> listConstants() {
-        return rpaService.listConstants();
+    @GetMapping("enums")
+    public Result<Map<String, List<Option<Object, Object>>>> listEnums() {
+        return rpaService.listEnums();
     }
 
 }

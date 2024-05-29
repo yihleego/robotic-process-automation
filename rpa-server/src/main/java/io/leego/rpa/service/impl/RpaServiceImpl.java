@@ -314,7 +314,7 @@ public class RpaServiceImpl implements RpaService {
     }
 
     @Override
-    public Result<Map<String, List<Option<Object, Object>>>> listConstants() {
+    public Result<Map<String, List<Option<Object, Object>>>> listEnums() {
         return Result.buildSuccess(Map.of(
                 AppStatus.class.getSimpleName(), Option.of(AppStatus.values(), AppStatus::getCode, o -> messageConverter.convert(o.getName())),
                 UserStatus.class.getSimpleName(), Option.of(UserStatus.values(), UserStatus::getCode, o -> messageConverter.convert(o.getName())),

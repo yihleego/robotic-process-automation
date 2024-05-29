@@ -363,15 +363,15 @@
         },
         methods: {
             init() {
-                this.listConstants()
+                this.listEnums()
                 this.listTaskTypes()
                 this.listApps()
             },
             changeLocale(lang) {
                 this.$vuetify.lang.current = lang
             },
-            listConstants() {
-                axios.get(`/constants`)
+            listEnums() {
+                axios.get(`/enums`)
                   .then((response) => {
                       let result = response.data
                       if (!result.success) {

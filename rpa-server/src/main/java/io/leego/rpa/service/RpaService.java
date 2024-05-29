@@ -48,6 +48,6 @@ public interface RpaService {
 
     Result<Map<String, List<Option<String, String>>>> listTaskTypes();
 
-    Result<Map<String, List<Option<Object, Object>>>> listConstants();
+    Result<Map<String, List<Option<Object, Object>>>> listEnums();
 
 }
