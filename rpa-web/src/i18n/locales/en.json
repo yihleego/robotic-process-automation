@@ -10,7 +10,8 @@
   },
   "common": {
     "search": "Search",
-    "close": "Close"
+    "close": "Close",
+    "execute": "Execute"
   },
   "app": {
     "list": "Apps",
@@ -26,7 +27,7 @@
       "type": "Type",
       "data": "Data"
     },
-    "wechat": {
+    "type": {
       "login": "Login",
       "logout": "Logout",
       "sendPrivateMessages": "Send Private Messages",
@@ -34,30 +35,17 @@
       "addContacts": "Add Contacts",
       "postMoments": "Post Moments"
     },
-    "wecom": {
-      "login": "Login",
-      "logout": "Logout",
-      "sendPrivateMessages": "Send Private Messages",
-      "sendGroupMessages": "Send Group Messages",
-      "addContacts": "Add Contacts"
-    },
-    "qq": {
-      "login": "Login",
-      "logout": "Logout",
-      "sendPrivateMessages": "Send Private Messages",
-      "sendGroupMessages": "Send Group Messages"
-    },
-    "dingtalk": {
-      "login": "Login",
-      "logout": "Logout",
-      "sendPrivateMessages": "Send Private Messages",
-      "sendGroupMessages": "Send Group Messages"
-    },
-    "lark": {
-      "login": "Login",
-      "logout": "Logout",
-      "sendPrivateMessages": "Send Private Messages",
-      "sendGroupMessages": "Send Group Messages"
+    "message": {
+      "target": "Recipient",
+      "content": "Content",
+      "type": "Type",
+      "types": {
+        "text": "Text",
+        "image": "Image",
+        "video": "Video",
+        "file": "File",
+        "mention": "Mention"
+      }
     }
   },
   "user": {

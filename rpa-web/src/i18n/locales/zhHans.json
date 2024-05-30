@@ -10,7 +10,8 @@
   },
   "common": {
     "search": "搜索",
-    "close": "关闭"
+    "close": "关闭",
+    "execute": "执行"
   },
   "app": {
     "list": "应用列表",
@@ -26,7 +27,7 @@
       "type": "任务类型",
       "data": "任务数据"
     },
-    "wechat": {
+    "type": {
       "login": "登录",
       "logout": "登出",
       "sendPrivateMessages": "发送个人消息",
@@ -34,30 +35,17 @@
       "addContacts": "添加联系人",
       "postMoments": "朋友圈"
     },
-    "wecom": {
-      "login": "登录",
-      "logout": "登出",
-      "sendPrivateMessages": "发送个人消息",
-      "sendGroupMessages": "发送群消息",
-      "addContacts": "添加联系人"
-    },
-    "qq": {
-      "login": "登录",
-      "logout": "登出",
-      "sendPrivateMessages": "发送个人消息",
-      "sendGroupMessages": "发送群消息"
-    },
-    "dingtalk": {
-      "login": "登录",
-      "logout": "登出",
-      "sendPrivateMessages": "发送个人消息",
-      "sendGroupMessages": "发送群消息"
-    },
-    "lark": {
-      "login": "登录",
-      "logout": "登出",
-      "sendPrivateMessages": "发送个人消息",
-      "sendGroupMessages": "发送群消息"
+    "message": {
+      "target": "接收人",
+      "content": "消息内容",
+      "type": "消息类型",
+      "types": {
+        "text": "文本",
+        "image": "图片",
+        "video": "视频",
+        "file": "文件",
+        "mention": "提醒"
+      }
     }
   },
   "user": {
