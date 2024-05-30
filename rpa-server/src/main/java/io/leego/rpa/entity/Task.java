@@ -2,13 +2,18 @@ package io.leego.rpa.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -18,15 +23,17 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldNameConstants
-@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "task")
-public class Task extends BaseEntity {
-    @Column(nullable = false, updatable = false)
+public class Task implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(updatable = false, nullable = false)
     private String appId;
-    @Column(nullable = false, updatable = false)
-    private String userId;
-    @Column(nullable = false, updatable = false)
+    @Column(updatable = false, nullable = false)
+    private Long userId;
+    @Column(updatable = false, nullable = false)
     private String type;
     private Integer status;
     private Integer priority;
@@ -36,4 +43,10 @@ public class Task extends BaseEntity {
     private LocalDateTime scheduleTime;
     private LocalDateTime executedTime;
     private LocalDateTime finishedTime;
+    @CreatedDate
+    @Column(updatable = false, nullable = false)
+    private LocalDateTime createdTime;
+    @LastModifiedDate
+    @Column(insertable = false)
+    private LocalDateTime updatedTime;
 }

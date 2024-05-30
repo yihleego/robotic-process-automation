@@ -2,6 +2,8 @@ package io.leego.rpa.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
 import jakarta.persistence.Table;
@@ -9,8 +11,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * @author Leego Yih
@@ -21,13 +26,13 @@ import java.io.Serializable;
 @FieldNameConstants
 @Entity
 @Table(name = "dict")
-@IdClass(Dict.PrimaryKey.class)
-public class Dict {
+public class Dict implements Serializable {
     @Id
-    @Column(name = "`type`", nullable = false, updatable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(name = "`type`", nullable = false)
     private String type;
-    @Id
-    @Column(name = "`key`", nullable = false, updatable = false)
+    @Column(name = "`key`", nullable = false)
     private String key;
     @Column(name = "`value`")
     private String value;
@@ -35,12 +40,10 @@ public class Dict {
     private String remark;
     @Column(name = "`order`")
     private Integer order;
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class PrimaryKey implements Serializable {
-        private String type;
-        private String key;
-    }
+    @CreatedDate
+    @Column(updatable = false, nullable = false)
+    private LocalDateTime createdTime;
+    @LastModifiedDate
+    @Column(insertable = false)
+    private LocalDateTime updatedTime;
 }

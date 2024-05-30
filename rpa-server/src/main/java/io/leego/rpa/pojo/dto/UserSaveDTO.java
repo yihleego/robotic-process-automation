@@ -18,7 +18,7 @@ public class UserSaveDTO {
 
     @Data
     public static class UserDTO {
-        private String id;
+        private Long id;
         @NotEmpty(message = Messages.USER_APP_ID_INVALID)
         private String appId;
         @NotEmpty(message = Messages.USER_ACCOUNT_INVALID)

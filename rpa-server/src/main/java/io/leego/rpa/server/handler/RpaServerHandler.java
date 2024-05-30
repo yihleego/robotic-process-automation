@@ -6,7 +6,6 @@ import io.leego.rpa.constant.Constants;
 import io.leego.rpa.constant.Messages;
 import io.leego.rpa.converter.MessageConverter;
 import io.leego.rpa.entity.App;
-import io.leego.rpa.entity.BaseEntity;
 import io.leego.rpa.entity.Task;
 import io.leego.rpa.entity.User;
 import io.leego.rpa.enumeration.AppStatus;
@@ -252,9 +251,9 @@ public class RpaServerHandler extends ChannelInboundHandlerAdapter {
         Map<String, Set<String>> clientMap = dto.getClients().stream()
                 .filter(o -> StringUtils.hasText(o.getAccount()) && Objects.equals(o.getStatus(), ClientStatus.ONLINE.getCode()))
                 .collect(Collectors.groupingBy(ClientDTO::getAccount, Collectors.mapping(ClientDTO::getAppId, Collectors.toSet())));
-        List<String> userIds = users.stream()
+        List<Long> userIds = users.stream()
                 .filter(user -> clientMap.getOrDefault(user.getAccount(), Collections.emptySet()).contains(user.getAppId()))
-                .map(BaseEntity::getId)
+                .map(User::getId)
                 .collect(Collectors.toList());
         if (CollectionUtils.isEmpty(userIds)) {
             logger.debug("No user found");

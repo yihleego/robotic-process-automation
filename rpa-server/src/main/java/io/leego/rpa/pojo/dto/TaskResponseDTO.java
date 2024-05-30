@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TaskResponseDTO {
     private String appId;
-    private String userId;
-    private String taskId;
+    private Long userId;
+    private Long taskId;
     private String account;
     private String data;
     private String type;

@@ -26,6 +26,7 @@ import {useRouter} from "vue-router"
 import Tr from "@/i18n/translation"
 
 export default {
+  name:"LanguageSwitcher",
   setup() {
     const {t, locale} = useI18n()
 

@@ -1,0 +1,76 @@
+{
+  "locale": {
+    "en": "English",
+    "zhHans": "Simplified Chinese"
+  },
+  "nav": {
+    "title": "Robotic Process Automation",
+    "doc": "Documentation",
+    "issues": "Issues"
+  },
+  "common": {
+    "search": "Search",
+    "close": "Close"
+  },
+  "app": {
+    "list": "Apps",
+    "wechat": "WeChat",
+    "wecom": "WeCom",
+    "qq": "QQ",
+    "dingtalk": "DingTalk",
+    "lark": "Lark"
+  },
+  "task": {
+    "form": {
+      "title": "Run task",
+      "type": "Type",
+      "data": "Data"
+    },
+    "wechat": {
+      "login": "Login",
+      "logout": "Logout",
+      "sendPrivateMessages": "Send Private Messages",
+      "sendGroupMessages": "Send Group Messages",
+      "addContacts": "Add Contacts",
+      "postMoments": "Post Moments"
+    },
+    "wecom": {
+      "login": "Login",
+      "logout": "Logout",
+      "sendPrivateMessages": "Send Private Messages",
+      "sendGroupMessages": "Send Group Messages",
+      "addContacts": "Add Contacts"
+    },
+    "qq": {
+      "login": "Login",
+      "logout": "Logout",
+      "sendPrivateMessages": "Send Private Messages",
+      "sendGroupMessages": "Send Group Messages"
+    },
+    "dingtalk": {
+      "login": "Login",
+      "logout": "Logout",
+      "sendPrivateMessages": "Send Private Messages",
+      "sendGroupMessages": "Send Group Messages"
+    },
+    "lark": {
+      "login": "Login",
+      "logout": "Logout",
+      "sendPrivateMessages": "Send Private Messages",
+      "sendGroupMessages": "Send Group Messages"
+    }
+  },
+  "user": {
+    "id": "ID",
+    "account": "Account",
+    "nickname": "Nickname",
+    "realname": "Realname",
+    "company": "Company",
+    "phone": "Phone",
+    "avatar": "Avatar",
+    "status": "Status",
+    "createdTime": "Created Time",
+    "updatedTime": "Updated Time",
+    "actions": "Actions"
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "locale": {
+    "en": "英语",
+    "zhHans": "简体中文"
+  },
+  "nav": {
+    "title": "机器人流程自动化",
+    "doc": "相关文档",
+    "issues": "错误报告"
+  },
+  "common": {
+    "search": "搜索",
+    "close": "关闭"
+  },
+  "app": {
+    "list": "应用列表",
+    "wechat": "微信",
+    "wecom": "企业微信",
+    "qq": "腾讯QQ",
+    "dingtalk": "钉钉",
+    "lark": "飞书"
+  },
+  "task": {
+    "form": {
+      "title": "运行任务",
+      "type": "任务类型",
+      "data": "任务数据"
+    },
+    "wechat": {
+      "login": "登录",
+      "logout": "登出",
+      "sendPrivateMessages": "发送个人消息",
+      "sendGroupMessages": "发送群消息",
+      "addContacts": "添加联系人",
+      "postMoments": "朋友圈"
+    },
+    "wecom": {
+      "login": "登录",
+      "logout": "登出",
+      "sendPrivateMessages": "发送个人消息",
+      "sendGroupMessages": "发送群消息",
+      "addContacts": "添加联系人"
+    },
+    "qq": {
+      "login": "登录",
+      "logout": "登出",
+      "sendPrivateMessages": "发送个人消息",
+      "sendGroupMessages": "发送群消息"
+    },
+    "dingtalk": {
+      "login": "登录",
+      "logout": "登出",
+      "sendPrivateMessages": "发送个人消息",
+      "sendGroupMessages": "发送群消息"
+    },
+    "lark": {
+      "login": "登录",
+      "logout": "登出",
+      "sendPrivateMessages": "发送个人消息",
+      "sendGroupMessages": "发送群消息"
+    }
+  },
+  "user": {
+    "id": "ID",
+    "account": "账号",
+    "nickname": "昵称",
+    "realname": "姓名",
+    "company": "公司",
+    "phone": "手机号码",
+    "avatar": "头像",
+    "status": "状态",
+    "createdTime": "创建时间",
+    "updatedTime": "更新时间",
+    "actions": "操作"
+  }
+}

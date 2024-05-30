@@ -1,11 +1,9 @@
 import axios from "axios";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
-
-console.log('API_BASE_URL', API_BASE_URL)
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL.replace(/\/$/, '')
 
 export default {
-  listApps: function (params) {
+  listApps: (params) => {
     return axios.get(`${API_BASE_URL}/apps`, {params})
       .then((resp) => {
         const res = resp.data
@@ -16,7 +14,13 @@ export default {
         }
       })
   },
-  listUsers: function (params) {
+  createUser: (params) => {
+
+  },
+  updateUser: (params) => {
+
+  },
+  listUsers: (params) => {
     return axios.get(`${API_BASE_URL}/users`, {params})
       .then((resp) => {
         let res = resp.data
@@ -26,5 +30,8 @@ export default {
           throw res.message
         }
       })
-  }
+  },
+  getTask: () => {
+
+  },
 }

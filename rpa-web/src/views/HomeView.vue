@@ -35,10 +35,11 @@
                     v-for="app in app.list"
                     :key="app.id"
                     :value="app.name"
+                    :active="app.id === curApp.id"
                     @click="selectApp(app)"
                 >
                   <template v-slot:prepend>
-                    <v-icon :class="'icon-'+app.id"></v-icon>
+                    <v-avatar :image="app.logo" rounded="0"></v-avatar>
                   </template>
 
                   <v-list-item-title v-text="$t(`app.${app.id}`)"></v-list-item-title>
@@ -69,31 +70,39 @@
                             clearable>
                         </v-text-field>
                       </v-col>
-                      <v-col>
-                        <v-btn @click="listUsers">{{ $t('common.search') }}</v-btn>
+                      <v-col
+                          class="align-center text-center"
+                      >
+                        <v-btn
+                            @click="listUsers">
+                          {{ $t('common.search') }}
+                        </v-btn>
                       </v-col>
                     </v-row>
                   </v-container>
                 </template>
 
                 <v-data-table
-                    :headers="user.headers.filter(o => o.display)"
+                    :headers="user.headers.filter(o => o.visible)"
                     :items="user.list"
                     :server-items-length="user.total"
                     :loading="user.loading"
                     loading-text="Loading..."
                     @update:options="listUsers"
-                    :options.sync="user.options"
-                    :items-per-page-options="user.options.itemsPerPageOptions"
+                    :page.sync="user.options.page"
+                    :items-per-page.sync="user.options.itemsPerPage"
+                    :items-per-page-options.sync="user.options.itemsPerPageOptions"
+                    :sort-by.sync="user.options.sortBy"
                     locale
                 >
-                  <template v-slot:item.avatar="{ item }">
+                  <template v-slot:item.account="{ item }">
                     <v-avatar size="25">
                       <v-img :src="item.avatar" :alt="item.nickname"></v-img>
                     </v-avatar>
+                    {{ item.account }}
                   </template>
                   <template v-slot:item.actions="{ item }">
-                    <v-icon @click.stop="task.dialog=true; task.user=item; task.app=app">
+                    <v-icon @click.stop="popupTaskDialog(item)">
                       mdi-robot
                     </v-icon>
                   </template>
@@ -103,14 +112,9 @@
           </v-col>
         </v-row>
 
-        <v-snackbar v-model="snackbar.display">
-          {{ snackbar.content }}
-          <template v-slot:action="{ attrs }">
-            <v-btn color="pink" text v-bind="attrs" @click="snackbar.display = false">
-              {{ t('toast.close') }}
-            </v-btn>
-          </template>
-        </v-snackbar>
+        <TaskExecutor v-bind="task" @update:visible="task.visible = $event"/>
+
+        <Toast v-bind="toast" @update:visible="toast.visible = $event"/>
 
       </v-container>
     </v-main>
@@ -119,12 +123,13 @@
 
 <script>
 import {useI18n} from 'vue-i18n'
-import LanguageSwitcher from "@/components/LanguageSwitcher.vue";
-import api from "@/api/api"
-import '../style.css'
+import LanguageSwitcher from "@/components/LanguageSwitcher/index.vue";
+import TaskExecutor from "@/components/TaskExecutor/index.vue";
+import Toast from "@/components/Toast/index.vue";
+import api from "@/api"
 
 export default {
-  components: {LanguageSwitcher},
+  components: {LanguageSwitcher, TaskExecutor, Toast},
   setup() {
     const {t, locale} = useI18n()
     return {t, locale}
@@ -135,9 +140,9 @@ export default {
       {title: "nav.doc", url: "https://github.com/yihleego/robotic-process-automation/README.md"},
       {title: "nav.issues", url: "https://github.com/yihleego/robotic-process-automation/issues"},
     ],
-    snackbar: {
-      content: "",
-      display: false
+    toast: {
+      visible: false,
+      message: "123",
     },
     curApp: null,
     app: {
@@ -154,31 +159,37 @@ export default {
         company: null,
       },
       headers: [
-        {title: 'user.id', key: 'id', display: true, sortable: true, queryable: false, align: 'start'},
-        {title: 'user.avatar', key: 'avatar', display: true, sortable: false, queryable: false},
-        {title: 'user.account', key: 'account', display: true, sortable: true, queryable: true},
-        {title: 'user.nickname', key: 'nickname', display: true, sortable: false, queryable: true},
-        {title: 'user.realname', key: 'realname', display: true, sortable: false, queryable: true},
-        {title: 'user.company', key: 'company', display: true, sortable: false, queryable: true},
-        {title: 'user.phone', key: 'phone', display: true, sortable: false, queryable: false},
-        {title: 'user.status', key: 'status', display: false, sortable: false, queryable: false},
-        {title: 'user.createdTime', key: 'createdTime', display: true, sortable: true, queryable: false},
-        {title: 'user.updatedTime', key: 'updatedTime', display: true, sortable: true, queryable: false},
-        {title: 'user.actions', key: 'actions', display: true, sortable: false, queryable: false, align: 'center'},
+        {title: 'Id', key: 'id', sortable: true, queryable: false, visible: true},
+        {title: 'Account', key: 'account', sortable: true, queryable: true, visible: true},
+        {title: 'Nickname', key: 'nickname', sortable: false, queryable: true, visible: true},
+        {title: 'Realname', key: 'realname', sortable: false, queryable: true, visible: true},
+        {title: 'Company', key: 'company', sortable: false, queryable: true, visible: true},
+        {title: 'Phone', key: 'phone', sortable: false, queryable: true, visible: true},
+        {title: 'Status', key: 'status', sortable: false, queryable: false, visible: false},
+        {title: 'Created Time', key: 'createdTime', sortable: true, queryable: false, visible: true},
+        {title: 'Updated Time', key: 'updatedTime', sortable: true, queryable: false, visible: true},
+        {title: 'Actions', key: 'actions', sortable: false, queryable: false, visible: true},
       ],
       options: {
         page: 1,
         itemsPerPage: 10,
         itemsPerPageOptions: [
           {value: 10, title: '10'},
-          {value: 25, title: '25'},
+          {value: 20, title: '20'},
           {value: 50, title: '50'},
           {value: 100, title: '100'},
         ],
-        multiSort: false,
-        sortBy: ['createdTime'],
-        sortDesc: [true],
+        sortBy: [
+          {key: "createdTime", order: "desc"},
+        ],
       },
+    },
+    task: {
+      app: null,
+      user: null,
+      visible: false,
+      configs: [],
+      definitions: []
     },
   }),
   created() {
@@ -206,7 +217,7 @@ export default {
             this.app.list = res.data.list
             this.app.total = res.data.total
             this.curApp = this.app.list[0]
-            this.listUsers()
+            this.selectApp(this.curApp)
           })
           .catch((error) => {
             this.toast(error)
@@ -220,7 +231,9 @@ export default {
       let params = {
         appIds: this.curApp.id,
         page: this.user.options.page,
-        size: this.user.options.itemsPerPage
+        size: this.user.options.itemsPerPage,
+        sort: this.user.options.sortBy.map(o => `${o.key}:${o.order}`).join(','),
+        ...this.user.query
       }
       api.listUsers(params)
           .then((res) => {
@@ -234,54 +247,15 @@ export default {
             this.user.loading = false
           })
     },
-    listEnums() {
-      /*axios.get(`/enums`)
-          .then((response) => {
-              let result = response.data
-              if (!result.success) {
-                  throw result.message
-              }
-              this.constants = result.data
-              for (let key in this.constants) {
-                  let values = this.constants[key]
-                  let map = {}
-                  for (let i in values) {
-                      map[values[i].key] = values[i].value
-                  }
-                  this.enums[key] = map
-              }
-          })
-          .catch((error) => {
-              this.toast(error)
-          })*/
-    },
-    listTaskTypes() {
-      /*axios.get(`/tasks/types`)
-          .then((response) => {
-              let result = response.data
-              if (!result.success) {
-                  throw result.message
-              }
-              this.taskTypes = result.data
-              let map = {}
-              for (let appId in this.taskTypes) {
-                  let values = this.taskTypes[appId]
-                  for (let i in values) {
-                      if (!map[appId]) {
-                          map[appId] = {}
-                      }
-                      map[appId][values[i].key] = values[i].value
-                  }
-                  this.enums['TaskType'] = map
-              }
-          })
-          .catch((error) => {
-              this.toast(error)
-          })*/
+    popupTaskDialog(user) {
+      this.task.visible = true
+      this.task.user = user
+      this.task.app = this.curApp
+      console.log('configs', this.task)
     },
     toast(message) {
       this.toast.content = message
-      this.toast.display = true
+      this.toast.visible = true
     },
   }
 }

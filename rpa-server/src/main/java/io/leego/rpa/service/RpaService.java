@@ -30,13 +30,13 @@ public interface RpaService {
 
     Result<List<AppVO>> saveApps(AppSaveDTO dto);
 
-    Result<UserVO> getUser(String id);
+    Result<UserVO> getUser(Long id);
 
     Result<Page<UserVO>> listUsers(UserQueryDTO dto);
 
     Result<List<UserVO>> saveUsers(UserSaveDTO dto);
 
-    Result<TaskVO> getTask(String id);
+    Result<TaskVO> getTask(Long id);
 
     Result<Page<TaskVO>> listTasks(TaskQueryDTO dto);
 
