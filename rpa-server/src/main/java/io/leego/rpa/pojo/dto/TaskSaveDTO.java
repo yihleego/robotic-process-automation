@@ -21,7 +21,7 @@ public class TaskSaveDTO {
     @Data
     public static class TaskDTO {
         private Long id;
-        @NotEmpty(message = Messages.TASK_USER_ID_INVALID)
+        @NotNull(message = Messages.TASK_USER_ID_INVALID)
         private Long userId;
         @NotNull(message = Messages.TASK_TYPE_INVALID)
         private String type;

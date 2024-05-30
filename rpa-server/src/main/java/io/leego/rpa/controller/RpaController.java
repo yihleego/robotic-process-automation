@@ -39,7 +39,7 @@ public class RpaController {
     }
 
     @GetMapping("apps/{id}")
-    public Result<AppVO> getApp(@PathVariable String id) {
+    public Result<AppVO> getApp(@PathVariable("id") String id) {
         return rpaService.getApp(id);
     }
 
@@ -54,7 +54,7 @@ public class RpaController {
     }
 
     @GetMapping("users/{id}")
-    public Result<UserVO> getUser(@PathVariable Long id) {
+    public Result<UserVO> getUser(@PathVariable("id") Long id) {
         return rpaService.getUser(id);
     }
 
@@ -69,7 +69,7 @@ public class RpaController {
     }
 
     @GetMapping("tasks/{id}")
-    public Result<TaskVO> getTask(@PathVariable Long id) {
+    public Result<TaskVO> getTask(@PathVariable("id") Long id) {
         return rpaService.getTask(id);
     }
 
