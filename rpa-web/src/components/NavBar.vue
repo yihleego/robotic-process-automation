@@ -21,25 +21,12 @@
   </v-app-bar>
 </template>
 
-<script>
-import {useI18n} from 'vue-i18n'
+<script setup>
 import LanguageSwitcher from "@/components/LanguageSwitcher.vue"
 
-export default {
-  name: "NavBar",
-  components: {LanguageSwitcher},
-  setup() {
-    const {t, locale} = useI18n()
-    return {t, locale}
-  },
-  data() {
-    return {
-      links: [
-        {title: "nav.title", url: "https://github.com/yihleego/robotic-process-automation"},
-        {title: "nav.doc", url: "https://github.com/yihleego/robotic-process-automation/README.md"},
-        {title: "nav.issues", url: "https://github.com/yihleego/robotic-process-automation/issues"},
-      ],
-    }
-  }
-}
+const links = [
+  {title: "nav.title", url: "https://github.com/yihleego/robotic-process-automation"},
+  {title: "nav.doc", url: "https://github.com/yihleego/robotic-process-automation/README.md"},
+  {title: "nav.issues", url: "https://github.com/yihleego/robotic-process-automation/issues"},
+]
 </script>
