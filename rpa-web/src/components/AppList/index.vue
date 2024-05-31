@@ -54,7 +54,7 @@ export default {
             this.selectApp(this.cur)
           })
           .catch((error) => {
-            this.toast(error)
+            this.$toast.error(error)
           })
     },
     selectApp(app) {
