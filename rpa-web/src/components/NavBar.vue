@@ -1,10 +1,7 @@
 <template>
   <v-app-bar flat>
     <v-container class="mx-auto d-flex align-center justify-center">
-      <v-avatar
-          class="me-4 "
-          size="32"
-      >
+      <v-avatar class="me-4 " size="32">
         <v-img src="/logo.png" alt="RPA"></v-img>
       </v-avatar>
 
@@ -26,7 +23,7 @@
 
 <script>
 import {useI18n} from 'vue-i18n'
-import LanguageSwitcher from "@/components/LanguageSwitcher/index.vue";
+import LanguageSwitcher from "@/components/LanguageSwitcher.vue";
 
 export default {
   name: "NavBar",

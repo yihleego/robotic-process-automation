@@ -82,11 +82,11 @@
 <script>
 import {ref, watch} from 'vue';
 import {useI18n} from "vue-i18n";
-import MessageBox from "@/components/TaskExecutor/MessageBox.vue";
+import MessageBox from "@/components/MessageBox.vue";
 import api from "@/api";
 
 export default {
-  name: "TaskExecutor",
+  name: "TaskDialog",
   components: {MessageBox},
   props: {
     visible: {
@@ -168,7 +168,7 @@ export default {
             this.configs = res.data
           })
           .catch((error) => {
-            this.toast(error)
+            this.$toast(error)
           })
     },
     popupTaskType() {
@@ -191,7 +191,7 @@ export default {
             this.showTaskResult(task.id)
           })
           .catch((error) => {
-            this.toast(error)
+            this.$toast(error)
           })
     },
     showTaskResult(taskId) {
@@ -220,12 +220,12 @@ export default {
               }
               if (taskStatus === 2 || taskStatus === 3) {
                 // Deleted, Cancelled
-                this.toast('Task has been cancelled')
+                this.$toast('Task has been cancelled')
               } else if (taskStatus === 10) {
                 this.result.success = true
               } else {
                 this.result.success = false
-                this.toast('Failed to obtain QR code ' + taskMessage)
+                this.$toast('Failed to obtain QR code ' + taskMessage)
               }
               this.result.running = false
               this.result.status = taskStatus
@@ -241,7 +241,7 @@ export default {
               clearInterval(this.result.job)
             })
             .catch((error) => {
-              this.toast(error)
+              this.$toast(error)
               clearInterval(this.result.job)
             })
       }, 1000)

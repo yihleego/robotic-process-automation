@@ -7,33 +7,13 @@
         <v-row>
           <v-col cols="2">
             <v-sheet rounded="lg">
-              <v-list density="compact">
-                <v-list-subheader>{{ $t('app.list') }}</v-list-subheader>
-                <v-list-item
-                    v-for="app in app.list"
-                    :key="app.id"
-                    :value="app.name"
-                    :active="app.id === curApp.id"
-                    @click="selectApp(app)"
-                >
-                  <template v-slot:prepend>
-                    <v-avatar :image="app.logo" size="25" rounded="0"></v-avatar>
-                  </template>
-
-                  <v-list-item-title v-text="$t(`app.${app.id}`)"></v-list-item-title>
-                </v-list-item>
-              </v-list>
+              <AppList @update="selectApp"></AppList>
             </v-sheet>
           </v-col>
 
           <v-col cols="10">
-            <v-sheet
-                min-height="70vh"
-                rounded="lg"
-            >
-              <v-card
-                  flat
-              >
+            <v-sheet rounded="lg" min-height="70vh">
+              <v-card flat>
                 <template v-slot:text>
                   <v-container>
                     <v-row>
@@ -80,7 +60,7 @@
                     {{ item.account }}
                   </template>
                   <template v-slot:item.actions="{ item }">
-                    <v-icon @click.stop="popupTaskDialog(item)">
+                    <v-icon @click.stop="popupTask(item)">
                       mdi-robot
                     </v-icon>
                   </template>
@@ -90,9 +70,7 @@
           </v-col>
         </v-row>
 
-        <TaskExecutor v-bind="task" @update:visible="task.visible = $event"/>
-
-        <Toast v-bind="toast" @update:visible="toast.visible = $event"/>
+        <TaskDialog v-bind="task" @update:visible="task.visible = $event"/>
 
       </v-container>
     </v-main>
@@ -101,22 +79,18 @@
 
 <script>
 import {useI18n} from 'vue-i18n'
-import NavBar from "@/components/NavBar/index.vue";
-import TaskExecutor from "@/components/TaskExecutor/index.vue";
-import Toast from "@/components/Toast/index.vue";
+import NavBar from "@/components/NavBar.vue";
+import AppList from "@/components/AppList.vue";
+import TaskDialog from "@/components/TaskDialog.vue";
 import api from "@/api"
 
 export default {
-  components: {NavBar, TaskExecutor, Toast},
+  components: {NavBar, AppList, TaskDialog},
   setup() {
     const {t, locale} = useI18n()
     return {t, locale}
   },
   data: () => ({
-    toast: {
-      visible: false,
-      message: "123",
-    },
     curApp: null,
     app: {
       list: [],
@@ -166,7 +140,6 @@ export default {
     },
   }),
   created() {
-    this.listApps()
     this.user.headers.forEach(o => o.title = this.$t(`user.${o.key}`))
   },
   watch: {
@@ -178,24 +151,7 @@ export default {
     selectApp(app) {
       this.curApp = app
       this.listUsers()
-      this.$toast.()
-    },
-    listApps() {
-      let params = {
-        page: 1,
-        size: 100,
-        sort: 'createdTime:ASC',
-      }
-      api.listApps(params)
-          .then((res) => {
-            this.app.list = res.data.list
-            this.app.total = res.data.total
-            this.curApp = this.app.list[0]
-            this.selectApp(this.curApp)
-          })
-          .catch((error) => {
-            this.toast(error)
-          })
+      // this.$toast("123")
     },
     listUsers() {
       if (!this.curApp) {
@@ -215,21 +171,17 @@ export default {
             this.user.total = res.data.total
           })
           .catch((error) => {
-            this.toast(error)
+            this.$toast(error)
           })
           .finally(() => {
             this.user.loading = false
           })
     },
-    popupTaskDialog(user) {
+    popupTask(user) {
       this.task.visible = true
       this.task.user = user
       this.task.app = this.curApp
       console.log('configs', this.task)
-    },
-    toast(message) {
-      this.toast.content = message
-      this.toast.visible = true
     },
   }
 }
