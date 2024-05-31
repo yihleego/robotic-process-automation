@@ -22,7 +22,7 @@ import {useI18n} from 'vue-i18n'
 import api from "@/api";
 
 export default {
-  name: "NavBar",
+  name: "AppList",
   setup() {
     const {t, locale} = useI18n()
     return {t, locale,}
@@ -50,16 +50,14 @@ export default {
           .then((res) => {
             this.app.list = res.data.list
             this.app.total = res.data.total
-            this.cur = this.app.list[0]
-            this.selectApp(this.cur)
+            this.selectApp(this.app.list[0])
           })
-          .catch((error) => {
-            this.$toast.error(error)
+          .catch((err) => {
+            this.$toast.error(err)
           })
     },
     selectApp(app) {
       this.cur = app
-      this.listUsers()
       this.$emit('update', app)
     },
   }
