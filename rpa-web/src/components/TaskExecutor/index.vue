@@ -32,10 +32,10 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn @click="internalVisible = false">
+        <v-btn variant="outlined" @click="internalVisible = false">
           {{ $t('common.close') }}
         </v-btn>
-        <v-btn :disabled="!valid" @click="runTask">
+        <v-btn variant="outlined" :disabled="!valid" @click="runTask">
           {{ $t('common.execute') }}
         </v-btn>
       </v-card-actions>
@@ -162,6 +162,15 @@ export default {
     return {t, locale, internalVisible};
   },
   methods: {
+    created() {
+      api.listFuncs()
+          .then((res) => {
+            this.configs = res.data
+          })
+          .catch((error) => {
+            this.toast(error)
+          })
+    },
     popupTaskType() {
       this.configs.forEach(o => o.name = this.$t(`task.type.${o.key}`))
     },

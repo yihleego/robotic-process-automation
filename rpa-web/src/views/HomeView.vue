@@ -1,28 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar flat>
-      <v-container class="mx-auto d-flex align-center justify-center">
-        <v-avatar
-            class="me-4 "
-            size="32"
-        >
-          <v-img src="/logo.png" alt="RPA"></v-img>
-        </v-avatar>
-
-        <v-btn
-            v-for="link in links"
-            :key="link.title"
-            :text="$t(link.title)"
-            :href="link.url"
-            variant="text"
-        ></v-btn>
-
-        <v-spacer></v-spacer>
-
-        <LanguageSwitcher/>
-
-      </v-container>
-    </v-app-bar>
+    <NavBar></NavBar>
 
     <v-main class="bg-grey-lighten-3">
       <v-container>
@@ -123,23 +101,18 @@
 
 <script>
 import {useI18n} from 'vue-i18n'
-import LanguageSwitcher from "@/components/LanguageSwitcher/index.vue";
+import NavBar from "@/components/NavBar/index.vue";
 import TaskExecutor from "@/components/TaskExecutor/index.vue";
 import Toast from "@/components/Toast/index.vue";
 import api from "@/api"
 
 export default {
-  components: {LanguageSwitcher, TaskExecutor, Toast},
+  components: {NavBar, TaskExecutor, Toast},
   setup() {
     const {t, locale} = useI18n()
     return {t, locale}
   },
   data: () => ({
-    links: [
-      {title: "nav.title", url: "https://github.com/yihleego/robotic-process-automation"},
-      {title: "nav.doc", url: "https://github.com/yihleego/robotic-process-automation/README.md"},
-      {title: "nav.issues", url: "https://github.com/yihleego/robotic-process-automation/issues"},
-    ],
     toast: {
       visible: false,
       message: "123",
@@ -205,6 +178,7 @@ export default {
     selectApp(app) {
       this.curApp = app
       this.listUsers()
+      this.$toast.()
     },
     listApps() {
       let params = {

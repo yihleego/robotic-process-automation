@@ -1,47 +1,45 @@
 <template>
-  <v-snackbar v-model="internalVisible" :timeout="timeout">
-    {{ message }}
-    <template v-slot:actions>
-      <v-btn color="pink" @click="internalVisible = false">
-        {{ $t('common.close') }}
-      </v-btn>
-    </template>
+  <v-snackbar
+      :timeout="timeout"
+      :color="color"
+      v-model="active"
+      class="application"
+      @click="closeable">
+    <v-icon
+        dark
+        left
+        v-if="icon.length > 0">
+      {{ icon }}
+    </v-icon>
+    {{ text }}
   </v-snackbar>
 </template>
 
 <script>
-import {ref, watch} from 'vue';
-import {useI18n} from "vue-i18n";
-
 export default {
-  name: "Toast",
-  props: {
-    visible: {
-      type: Boolean,
-      default: false
+  data() {
+    return {
+      active: false,
+      text: '',
+      icon: '',
+      color: 'info',
+      timeout: 3000,
+      closeable: true,
+    }
+  },
+  methods: {
+    show(options = {}) {
+      if (this.active) {
+        this.close()
+        this.$nextTick(() => this.show(options))
+        return
+      }
+      Object.keys(options).forEach(field => (this[field] = options[field]))
+      this.active = true
     },
-    message: {
-      type: String,
-      default: null
-    },
-    timeout: {
-      type: Number,
-      default: 2000
+    close() {
+      this.active = false
     },
   },
-  setup(props, {emit}) {
-    const {t, locale} = useI18n()
-    const internalVisible = ref(props.visible);
-
-    watch(props, (newProps) => {
-      internalVisible.value = newProps.visible;
-    });
-
-    watch(internalVisible, (newValue) => {
-      emit('update:visible', newValue);
-    });
-
-    return {t, locale, internalVisible};
-  },
-};
+}
 </script>
