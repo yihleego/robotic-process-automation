@@ -1,7 +1,6 @@
 <template>
   <v-app>
     <NavBar></NavBar>
-
     <v-main class="bg-grey-lighten-3">
       <v-container>
         <v-row>
@@ -10,68 +9,12 @@
               <AppList @update="selectApp"></AppList>
             </v-sheet>
           </v-col>
-
           <v-col cols="10">
             <v-sheet rounded="lg" min-height="70vh">
-              <v-card flat>
-                <template v-slot:text>
-                  <v-container>
-                    <v-row>
-                      <v-col
-                          v-for="header in user.headers.filter(o => o.queryable)"
-                      >
-                        <v-text-field
-                            v-model="user.query[header.key]"
-                            :label="header.title"
-                            variant="outlined"
-                            density="compact"
-                            clearable>
-                        </v-text-field>
-                      </v-col>
-                      <v-col
-                          class="align-center text-center"
-                      >
-                        <v-btn
-                            @click="listUsers">
-                          {{ $t('common.search') }}
-                        </v-btn>
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                </template>
-
-                <v-data-table
-                    :headers="user.headers.filter(o => o.visible)"
-                    :items="user.list"
-                    :server-items-length="user.total"
-                    :loading="user.loading"
-                    loading-text="Loading..."
-                    @update:options="listUsers"
-                    :page.sync="user.options.page"
-                    :items-per-page.sync="user.options.itemsPerPage"
-                    :items-per-page-options.sync="user.options.itemsPerPageOptions"
-                    :sort-by.sync="user.options.sortBy"
-                    locale
-                >
-                  <template v-slot:item.account="{ item }">
-                    <v-avatar size="25">
-                      <v-img :src="item.avatar" :alt="item.nickname"></v-img>
-                    </v-avatar>
-                    {{ item.account }}
-                  </template>
-                  <template v-slot:item.actions="{ item }">
-                    <v-icon @click.stop="popupTask(item)">
-                      mdi-robot
-                    </v-icon>
-                  </template>
-                </v-data-table>
-              </v-card>
+              <UserList :app="curApp"></UserList>
             </v-sheet>
           </v-col>
         </v-row>
-
-        <TaskDialog v-bind="task" @update:visible="task.visible = $event"/>
-
       </v-container>
     </v-main>
   </v-app>
@@ -81,107 +24,23 @@
 import {useI18n} from 'vue-i18n'
 import NavBar from "@/components/NavBar.vue";
 import AppList from "@/components/AppList.vue";
+import UserList from "@/components/UserList.vue";
 import TaskDialog from "@/components/TaskDialog.vue";
-import api from "@/api"
 
 export default {
-  components: {NavBar, AppList, TaskDialog},
+  components: {NavBar, AppList, UserList, TaskDialog},
   setup() {
     const {t, locale} = useI18n()
     return {t, locale}
   },
   data: () => ({
     curApp: null,
-    app: {
-      list: [],
-      total: 0,
-    },
-    user: {
-      list: [],
-      total: 0,
-      query: {
-        account: null,
-        nickname: null,
-        realname: null,
-        company: null,
-      },
-      headers: [
-        {title: 'Id', key: 'id', sortable: true, queryable: false, visible: true},
-        {title: 'Account', key: 'account', sortable: true, queryable: true, visible: true},
-        {title: 'Nickname', key: 'nickname', sortable: false, queryable: true, visible: true},
-        {title: 'Realname', key: 'realname', sortable: false, queryable: true, visible: true},
-        {title: 'Company', key: 'company', sortable: false, queryable: true, visible: true},
-        {title: 'Phone', key: 'phone', sortable: false, queryable: true, visible: true},
-        {title: 'Status', key: 'status', sortable: false, queryable: false, visible: false},
-        {title: 'Created Time', key: 'createdTime', sortable: true, queryable: false, visible: true},
-        {title: 'Updated Time', key: 'updatedTime', sortable: true, queryable: false, visible: true},
-        {title: 'Actions', key: 'actions', sortable: false, queryable: false, visible: true},
-      ],
-      options: {
-        page: 1,
-        itemsPerPage: 10,
-        itemsPerPageOptions: [
-          {value: 10, title: '10'},
-          {value: 20, title: '20'},
-          {value: 50, title: '50'},
-          {value: 100, title: '100'},
-        ],
-        sortBy: [
-          {key: "createdTime", order: "desc"},
-        ],
-      },
-    },
-    task: {
-      app: null,
-      user: null,
-      visible: false,
-      configs: [],
-      definitions: []
-    },
   }),
   created() {
-    this.user.headers.forEach(o => o.title = this.$t(`user.${o.key}`))
-  },
-  watch: {
-    locale() {
-      this.user.headers.forEach(o => o.title = this.$t(`user.${o.key}`))
-    },
   },
   methods: {
     selectApp(app) {
       this.curApp = app
-      this.listUsers()
-      // this.$toast("123")
-    },
-    listUsers() {
-      if (!this.curApp) {
-        return
-      }
-      this.user.loading = true
-      let params = {
-        appIds: this.curApp.id,
-        page: this.user.options.page,
-        size: this.user.options.itemsPerPage,
-        sort: this.user.options.sortBy.map(o => `${o.key}:${o.order}`).join(','),
-        ...this.user.query
-      }
-      api.listUsers(params)
-          .then((res) => {
-            this.user.list = res.data.list
-            this.user.total = res.data.total
-          })
-          .catch((error) => {
-            this.$toast(error)
-          })
-          .finally(() => {
-            this.user.loading = false
-          })
-    },
-    popupTask(user) {
-      this.task.visible = true
-      this.task.user = user
-      this.task.app = this.curApp
-      console.log('configs', this.task)
     },
   }
 }
