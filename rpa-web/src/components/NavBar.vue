@@ -23,14 +23,14 @@
 
 <script>
 import {useI18n} from 'vue-i18n'
-import LanguageSwitcher from "@/components/LanguageSwitcher.vue";
+import LanguageSwitcher from "@/components/LanguageSwitcher.vue"
 
 export default {
   name: "NavBar",
   components: {LanguageSwitcher},
   setup() {
     const {t, locale} = useI18n()
-    return {t, locale,}
+    return {t, locale}
   },
   data() {
     return {
