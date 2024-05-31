@@ -19,13 +19,13 @@
 
 <script>
 import {useI18n} from 'vue-i18n'
-import api from "@/api";
+import api from "@/api"
 
 export default {
   name: "AppList",
   setup() {
     const {t, locale} = useI18n()
-    return {t, locale,}
+    return {t, locale}
   },
   created() {
     this.listApps()
