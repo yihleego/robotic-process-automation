@@ -30,10 +30,10 @@
     "type": {
       "login": "Login",
       "logout": "Logout",
-      "sendPrivateMessages": "Send Private Messages",
-      "sendGroupMessages": "Send Group Messages",
-      "addContacts": "Add Contacts",
-      "postMoments": "Post Moments"
+      "send_private_messages": "Send Private Messages",
+      "send_group_messages": "Send Group Messages",
+      "add_contacts": "Add Contacts",
+      "post_moments": "Post Moments"
     },
     "message": {
       "target": "Recipient",

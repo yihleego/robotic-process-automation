@@ -29,11 +29,11 @@
     },
     "type": {
       "login": "登录",
-      "logout": "登出",
-      "sendPrivateMessages": "发送个人消息",
-      "sendGroupMessages": "发送群消息",
-      "addContacts": "添加联系人",
-      "postMoments": "朋友圈"
+      "logout": "退出登录",
+      "send_private_messages": "发送个人消息",
+      "send_group_messages": "发送群消息",
+      "add_contacts": "添加联系人",
+      "post_moments": "发朋友圈"
     },
     "message": {
       "target": "接收人",

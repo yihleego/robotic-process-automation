@@ -56,8 +56,8 @@
 <script setup>
 import {onMounted, ref, watch} from "vue";
 import {useI18n} from "vue-i18n";
-import api from "@/api"
 import TaskDialog from "@/components/TaskDialog.vue";
+import api from "@/api"
 
 const {t, locale} = useI18n()
 
