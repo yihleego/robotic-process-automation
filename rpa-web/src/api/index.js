@@ -54,7 +54,7 @@ export default {
       })
   },
   listFuncs: (params) => {
-    return axios.get(`${API_BASE_URL}/tasks`, params)
+    return axios.get(`${API_BASE_URL}/funcs`, params)
       .then((resp) => {
         let res = resp.data
         if (res.success) {
