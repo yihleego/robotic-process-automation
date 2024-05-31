@@ -53,4 +53,15 @@ export default {
         }
       })
   },
+  listFuncs: (params) => {
+    return axios.get(`${API_BASE_URL}/tasks`, params)
+      .then((resp) => {
+        let res = resp.data
+        if (res.success) {
+          return res
+        } else {
+          throw res.message
+        }
+      })
+  },
 }

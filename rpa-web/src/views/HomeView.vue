@@ -39,7 +39,7 @@
                     @click="selectApp(app)"
                 >
                   <template v-slot:prepend>
-                    <v-avatar :image="app.logo" rounded="0"></v-avatar>
+                    <v-avatar :image="app.logo" size="25" rounded="0"></v-avatar>
                   </template>
 
                   <v-list-item-title v-text="$t(`app.${app.id}`)"></v-list-item-title>

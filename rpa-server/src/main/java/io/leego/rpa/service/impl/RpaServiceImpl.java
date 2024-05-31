@@ -2,23 +2,24 @@ package io.leego.rpa.service.impl;
 
 import io.leego.rpa.config.RpaProperties;
 import io.leego.rpa.constant.Constants;
-import io.leego.rpa.converter.MessageConverter;
 import io.leego.rpa.entity.App;
 import io.leego.rpa.entity.Dict;
 import io.leego.rpa.entity.QApp;
+import io.leego.rpa.entity.QFunc;
 import io.leego.rpa.entity.QTask;
 import io.leego.rpa.entity.QUser;
 import io.leego.rpa.entity.Task;
 import io.leego.rpa.entity.User;
 import io.leego.rpa.enumeration.AppStatus;
-import io.leego.rpa.enumeration.ClientStatus;
 import io.leego.rpa.enumeration.ErrorCode;
+import io.leego.rpa.enumeration.FuncStatus;
 import io.leego.rpa.enumeration.TaskStatus;
 import io.leego.rpa.enumeration.UserStatus;
 import io.leego.rpa.pojo.dto.AppQueryDTO;
 import io.leego.rpa.pojo.dto.AppSaveDTO;
 import io.leego.rpa.pojo.dto.ClientCacheDTO;
 import io.leego.rpa.pojo.dto.ClientQueryDTO;
+import io.leego.rpa.pojo.dto.FuncQueryDTO;
 import io.leego.rpa.pojo.dto.TaskDeleteDTO;
 import io.leego.rpa.pojo.dto.TaskQueryDTO;
 import io.leego.rpa.pojo.dto.TaskSaveDTO;
@@ -26,14 +27,15 @@ import io.leego.rpa.pojo.dto.UserQueryDTO;
 import io.leego.rpa.pojo.dto.UserSaveDTO;
 import io.leego.rpa.pojo.vo.AppVO;
 import io.leego.rpa.pojo.vo.ClientVO;
+import io.leego.rpa.pojo.vo.FuncVO;
 import io.leego.rpa.pojo.vo.TaskVO;
 import io.leego.rpa.pojo.vo.UserVO;
 import io.leego.rpa.repository.AppRepository;
 import io.leego.rpa.repository.DictRepository;
+import io.leego.rpa.repository.FuncRepository;
 import io.leego.rpa.repository.TaskRepository;
 import io.leego.rpa.repository.UserRepository;
 import io.leego.rpa.service.RpaService;
-import io.leego.rpa.util.Option;
 import io.leego.rpa.util.Page;
 import io.leego.rpa.util.QPredicate;
 import io.leego.rpa.util.Result;
@@ -49,7 +51,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -65,20 +66,20 @@ public class RpaServiceImpl implements RpaService {
     private static final Logger logger = LoggerFactory.getLogger(RpaServiceImpl.class);
     private final RpaProperties rpaProperties;
     private final AppRepository appRepository;
+    private final FuncRepository funcRepository;
     private final UserRepository userRepository;
     private final TaskRepository taskRepository;
     private final DictRepository dictRepository;
     private final RedisTemplate<String, Object> redisTemplate;
-    private final MessageConverter messageConverter;
 
-    public RpaServiceImpl(RpaProperties rpaProperties, AppRepository appRepository, UserRepository userRepository, TaskRepository taskRepository, DictRepository dictRepository, RedisTemplate<String, Object> redisTemplate, MessageConverter messageConverter) {
+    public RpaServiceImpl(RpaProperties rpaProperties, AppRepository appRepository, FuncRepository funcRepository, UserRepository userRepository, TaskRepository taskRepository, DictRepository dictRepository, RedisTemplate<String, Object> redisTemplate) {
         this.rpaProperties = rpaProperties;
         this.appRepository = appRepository;
+        this.funcRepository = funcRepository;
         this.userRepository = userRepository;
         this.taskRepository = taskRepository;
         this.dictRepository = dictRepository;
         this.redisTemplate = redisTemplate;
-        this.messageConverter = messageConverter;
     }
 
     @Override
@@ -287,22 +288,13 @@ public class RpaServiceImpl implements RpaService {
     }
 
     @Override
-    public Result<Map<String, List<Option<String, String>>>> listTaskTypes() {
-        List<Dict> taskTypes = dictRepository.findByTypeStartingWith(Constants.TASK_TYPE_PREFIX);
-        return Result.buildSuccess(taskTypes.stream()
-                .sorted(Comparator.comparing(Dict::getOrder))
-                .collect(Collectors.groupingBy(
-                        o -> o.getType().substring(Constants.TASK_TYPE_PREFIX.length()),
-                        Collectors.mapping(o -> Option.of(o.getKey(), o.getRemark()), Collectors.toList()))));
+    public Result<List<FuncVO>> listFuncs(FuncQueryDTO dto) {
+        QPredicate predicate = QPredicate.create()
+                .and(QFunc.func.id::in, dto.getIds())
+                .and(QFunc.func.appId::in, dto.getAppIds())
+                .and(QFunc.func.name::eq, dto.getName())
+                .and(QFunc.func.status::eq, FuncStatus.ENABLED.getCode());
+        return Result.buildSuccess(funcRepository.findAll(predicate).stream().map(FuncVO::from).toList());
     }
 
-    @Override
-    public Result<Map<String, List<Option<Object, Object>>>> listEnums() {
-        return Result.buildSuccess(Map.of(
-                AppStatus.class.getSimpleName(), Option.of(AppStatus.values(), AppStatus::getCode, o -> messageConverter.convert(o.getName())),
-                UserStatus.class.getSimpleName(), Option.of(UserStatus.values(), UserStatus::getCode, o -> messageConverter.convert(o.getName())),
-                TaskStatus.class.getSimpleName(), Option.of(TaskStatus.values(), TaskStatus::getCode, o -> messageConverter.convert(o.getName())),
-                ClientStatus.class.getSimpleName(), Option.of(ClientStatus.values(), ClientStatus::getCode, o -> messageConverter.convert(o.getName())),
-                ErrorCode.class.getSimpleName(), Option.of(ErrorCode.values(), ErrorCode::getCode, o -> messageConverter.convert(o.getMessage()))));
-    }
 }

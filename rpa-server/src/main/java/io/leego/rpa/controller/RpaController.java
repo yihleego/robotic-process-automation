@@ -3,6 +3,7 @@ package io.leego.rpa.controller;
 import io.leego.rpa.pojo.dto.AppQueryDTO;
 import io.leego.rpa.pojo.dto.AppSaveDTO;
 import io.leego.rpa.pojo.dto.ClientQueryDTO;
+import io.leego.rpa.pojo.dto.FuncQueryDTO;
 import io.leego.rpa.pojo.dto.TaskDeleteDTO;
 import io.leego.rpa.pojo.dto.TaskQueryDTO;
 import io.leego.rpa.pojo.dto.TaskSaveDTO;
@@ -10,10 +11,10 @@ import io.leego.rpa.pojo.dto.UserQueryDTO;
 import io.leego.rpa.pojo.dto.UserSaveDTO;
 import io.leego.rpa.pojo.vo.AppVO;
 import io.leego.rpa.pojo.vo.ClientVO;
+import io.leego.rpa.pojo.vo.FuncVO;
 import io.leego.rpa.pojo.vo.TaskVO;
 import io.leego.rpa.pojo.vo.UserVO;
 import io.leego.rpa.service.RpaService;
-import io.leego.rpa.util.Option;
 import io.leego.rpa.util.Page;
 import io.leego.rpa.util.Result;
 import org.springframework.validation.annotation.Validated;
@@ -25,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Leego Yih
@@ -93,16 +93,8 @@ public class RpaController {
         return rpaService.listClients(dto);
     }
 
-    @Deprecated
-    @GetMapping("tasks/types")
-    public Result<Map<String, List<Option<String, String>>>> listTaskTypes() {
-        return rpaService.listTaskTypes();
+    @GetMapping("funcs")
+    public Result<List<FuncVO>> listFuncs(@Validated FuncQueryDTO dto) {
+        return rpaService.listFuncs(dto);
     }
-
-    @Deprecated
-    @GetMapping("enums")
-    public Result<Map<String, List<Option<Object, Object>>>> listEnums() {
-        return rpaService.listEnums();
-    }
-
 }
