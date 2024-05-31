@@ -11,7 +11,7 @@
           </v-col>
           <v-col cols="10">
             <v-sheet rounded="lg" min-height="70vh">
-              <UserList :app="curApp"></UserList>
+              <UserList :app="app"></UserList>
             </v-sheet>
           </v-col>
         </v-row>
@@ -34,13 +34,13 @@ export default {
     return {t, locale}
   },
   data: () => ({
-    curApp: null,
+    app: null,
   }),
   created() {
   },
   methods: {
     selectApp(app) {
-      this.curApp = app
+      this.app = app
     },
   }
 }
