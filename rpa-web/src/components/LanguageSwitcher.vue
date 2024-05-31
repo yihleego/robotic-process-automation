@@ -19,35 +19,20 @@
   </v-menu>
 </template>
 
-<script>
-import {useI18n} from 'vue-i18n'
+<script setup>
 import {useRouter} from "vue-router"
-
 import Tr from "@/i18n/translation"
 
-export default {
-  name:"LanguageSwitcher",
-  setup() {
-    const {t, locale} = useI18n()
+const router = useRouter()
+const supportedLocales = Tr.supportedLocales
 
-    const supportedLocales = Tr.supportedLocales
-
-    const router = useRouter()
-
-    const switchLanguage = async (locale) => {
-      const newLocale = locale
-
-      await Tr.switchLanguage(newLocale)
-
-      try {
-        await router.replace({params: {locale: newLocale}})
-      } catch (e) {
-        console.log(e)
-        router.push("/")
-      }
-    }
-
-    return {t, locale, supportedLocales, switchLanguage}
+const switchLanguage = async (locale) => {
+  const newLocale = locale
+  await Tr.switchLanguage(newLocale)
+  try {
+    await router.replace({params: {locale: newLocale}})
+  } catch (err) {
+    await router.push("/")
   }
 }
 </script>
