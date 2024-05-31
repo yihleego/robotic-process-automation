@@ -17,49 +17,48 @@
   </v-list>
 </template>
 
-<script>
-import {useI18n} from 'vue-i18n'
+<script setup>
+import {onMounted, ref} from 'vue'
+import {toast} from 'vue3-toastify'
 import api from "@/api"
 
-export default {
-  name: "AppList",
-  setup() {
-    const {t, locale} = useI18n()
-    return {t, locale}
-  },
-  created() {
-    this.listApps()
-  },
-  data() {
-    return {
-      cur: null,
-      app: {
-        list: [],
-        total: 0,
-      },
-    }
-  },
-  methods: {
-    listApps() {
-      let params = {
-        page: 1,
-        size: 100,
-        sort: 'createdTime:ASC',
-      }
-      api.listApps(params)
-          .then((res) => {
-            this.app.list = res.data.list
-            this.app.total = res.data.total
-            this.selectApp(this.app.list[0])
-          })
-          .catch((err) => {
-            this.$toast.error(err)
-          })
-    },
-    selectApp(app) {
-      this.cur = app
-      this.$emit('update', app)
-    },
-  }
+const emit = defineEmits(['update'])
+
+const cur = ref({
+  id: null,
+})
+
+const app = ref({
+  list: [],
+  total: 0,
+})
+
+const selectApp = (app) => {
+  cur.value = app
+  emit('update', app)
 }
+
+const listApps = () => {
+  let params = {
+    page: 1,
+    size: 100,
+    sort: 'createdTime:ASC',
+  }
+  api.listApps(params)
+      .then((res) => {
+        app.value = {
+          list: res.data.list,
+          total: res.data.total,
+        }
+        selectApp(app.value.list[0])
+      })
+      .catch((err) => {
+        console.error(err)
+        toast.error(err)
+      })
+}
+
+onMounted(() => {
+  listApps()
+})
 </script>
