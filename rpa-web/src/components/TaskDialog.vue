@@ -1,12 +1,12 @@
 <template>
   <v-dialog v-model="model" width="60vw">
     <v-card v-if="!task.result.created">
-      <v-card-title>
-        <span class="text-h5">{{ $t('task.dialog.title') }}</span>
-      </v-card-title>
-      <v-card-text>
-        <v-form v-model="task.valid">
-          <v-container>
+      <v-container>
+        <v-card-title>
+          <span class="text-h5">{{ $t('task.dialog.title') }}</span>
+        </v-card-title>
+        <v-card-text>
+          <v-form>
             <v-row>
               <v-col cols="12" md="12">
                 <v-select
@@ -24,55 +24,57 @@
               </v-col>
             </v-row>
             <TaskForm v-model="task.params.data" :definition="func.cur.param"></TaskForm>
-          </v-container>
-        </v-form>
-      </v-card-text>
-      <v-card-actions>
-        {{task.params}}
-        <v-spacer></v-spacer>
-        <v-btn variant="outlined" @click="model=false">
-          {{ $t('common.close') }}
-        </v-btn>
-        <v-btn variant="outlined" :disabled="!task.valid" @click="runTask">
-          {{ $t('common.run') }}
-        </v-btn>
-      </v-card-actions>
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn variant="outlined" @click="closeTaskDialog">
+            {{ $t('common.close') }}
+          </v-btn>
+          <v-btn variant="outlined" @click="runTask">
+            {{ $t('common.run') }}
+          </v-btn>
+        </v-card-actions>
+      </v-container>
     </v-card>
+
     <v-card v-else :loading="task.result.running" class="text-center align-center">
-      <v-card-title>
-        <span class="text-h5">{{ task.result.running ? 'Running' : 'Result' }}</span>
-      </v-card-title>
-      <v-card-text>
-        <v-skeleton-loader
-            v-if="task.result.running"
-            width="280px"
-            height="280px"
-            type="card">
-        </v-skeleton-loader>
-        <div v-if="!task.result.running">
-          <v-img
-              v-if="task.result.qrcode"
-              :src="task.result.qrcode"
-              max-width="280px"
-              max-height="280px">
-          </v-img>
-          <p class="text-h5 text--primary">
-            {{ task.result.status }}
-          </p>
-          <p class="text--primary" v-if="task.result.message">
-            {{ task.result.message }}
-          </p>
-          <p class="text--primary">
-            {{ task.result.result }}
-          </p>
-        </div>
-      </v-card-text>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn @click="closeTaskResult">
-          {{ $t('common.close') }}
-        </v-btn>
-      </v-card-actions>
+      <v-container>
+        <v-card-title>
+          <span class="text-h5">{{ task.result.running ? 'Running' : 'Result' }}</span>
+        </v-card-title>
+        <v-card-text>
+          <v-skeleton-loader
+              v-if="task.result.running"
+              width="280px"
+              height="280px"
+              type="card">
+          </v-skeleton-loader>
+          <div v-if="!task.result.running">
+            <v-img
+                v-if="task.result.qrcode"
+                :src="task.result.qrcode"
+                max-width="280px"
+                max-height="280px">
+            </v-img>
+            <p class="text-h5 text--primary">
+              {{ $t(task.result.status) }}
+            </p>
+            <p class="text--primary" v-if="task.result.message">
+              {{ task.result.message }}
+            </p>
+            <p class="text--primary">
+              {{ task.result.result }}
+            </p>
+          </div>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn @click="closeTaskDialog">
+            {{ $t('common.close') }}
+          </v-btn>
+        </v-card-actions>
+      </v-container>
     </v-card>
   </v-dialog>
 </template>
@@ -103,7 +105,6 @@ const props = defineProps({
 })
 
 const task = reactive({
-  valid: false,
   params: {
     userId: null,
     type: null,
@@ -149,11 +150,16 @@ const selectTaskType = (type) => {
 }
 
 const runTask = () => {
-  task.params.appId = props.app.id
-  task.params.userId = props.user.id
-  task.params.data = JSON.stringify(task.params.data)
-  console.log('runTask', task.params)
-  api.createTasks({tasks: [task.params]})
+  let params = {
+    userId: props.user.id,
+    type: func.cur.name,
+    priority: func.cur.priority || 100,
+    data: JSON.stringify(task.params.data),
+    scheduleTime: null
+  }
+  console.log('run task', params)
+  // create one task, and wait for the result
+  api.createTasks({tasks: [params]})
       .then((res) => {
         let task = res.data[0]
         task.result = task
@@ -165,59 +171,73 @@ const runTask = () => {
 }
 
 const showTaskResult = (taskId) => {
-  task.result.created = true
-  task.result.running = true
-  task.result.qrcode = null
-  task.result.retries = 0
-  task.result.job = setInterval(() => {
+  const Status = {
+    CREATED: {code: 0, desc: "task.status.created"},
+    RUNNING: {code: 1, desc: "task.status.running"},
+    DELETED: {code: 2, desc: "task.status.deleted"},
+    CANCELLED: {code: 3, desc: "task.status.cancelled"},
+    FINISHED: {code: 10, desc: "task.status.finished"},
+    FAILED: {code: 11, desc: "task.status.failed"},
+    TIMEOUT: {code: 12, desc: "task.status.timeout"},
+    OFFLINE: {code: 13, desc: "task.status.offline"},
+    TERMINATED: {code: 14, desc: "task.status.terminated"},
+    UNSUPPORTED: {code: 15, desc: "task.status.unsupported"},
+  }
+
+  const end = () => {
+    if (task.result.job) {
+      clearInterval(task.result.job)
+    }
+    task.result.running = false
+  }
+  const result = task.result
+  result.created = true
+  result.running = true
+  result.qrcode = null
+  result.retries = 0
+  result.job = setInterval(() => {
     api.getTask(taskId)
         .then((res) => {
-          task.result.retries = task.result.retries + 1
-          /*let task = res.data
-          let taskType = task.type
-          let taskStatus = task.status
-          let taskMessage = task.message
-          let taskResult = task.result*/
-          if (task.status === 0 || task.status === 1) {
-            // Created, Running
-            console.log('Waiting', task)
-            if (task.result.retries > 60) {
-              task.result.running = false
-              task.result.message = 'Timeout'
-              clearInterval(task.result.job)
+          result.retries++
+          result.type = res.data.type
+          result.status = res.data.status
+          result.message = res.data.message
+          result.result = res.data.result
+          if (result.status === Status.CREATED.code || result.status === Status.RUNNING.code) {
+            console.log('waiting', task)
+            if (result.retries > 60) {
+              result.message = 'Timeout'
+              end()
             }
             return
           }
-          if (task.status === 2 || task.status === 3) {
-            // Deleted, Cancelled
+
+          if (result.status === Status.DELETED.code || result.status === Status.CANCELLED.code) {
             toast.warning('Task has been cancelled')
-          } else if (task.status === 10) {
-            task.result.success = true
+          } else if (result.status === Status.FINISHED.code) {
+            result.success = true
           } else {
-            task.result.success = false
-            toast.error('Failed to obtain QR code ' + task.message)
+            result.success = false
+            toast.error('Failed: ' + result.message)
           }
-          task.result.running = false
-          task.result.status = task.status
-          task.result.message = task.message
-          task.result.result = null
-          if (task.result && this.isJSON(task.result)) {
-            let r = JSON.parse(task.result)
-            task.result.result = r
-            if (task.type === 'login' && r.qrcode) {
-              task.result.qrcode = createQRCode(r.qrcode, {size: 256})
+
+          if (result.result && isJSON(result.result)) {
+            result.result = JSON.parse(result.result)
+            if (result.result.qrcode) {
+              result.qrcode = createQRCode(result.result.qrcode, {size: 256})
             }
           }
-          clearInterval(task.result.job)
+
+          end()
         })
         .catch((err) => {
           toast.error(err)
-          clearInterval(task.result.job)
+          end()
         })
   }, 1000)
 }
 
-const closeTaskResult = () => {
+const closeTaskDialog = () => {
   if (task.result.job) {
     clearInterval(task.result.job)
   }
@@ -228,6 +248,7 @@ const closeTaskResult = () => {
     message: null,
     job: null,
   }
+  model.value = false
 }
 
 const isJSON = (v) => {

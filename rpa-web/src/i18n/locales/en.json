@@ -36,6 +36,18 @@
       "add_contacts": "Add Contacts",
       "post_moments": "Post Moments"
     },
+    "status": {
+      "created": "Created",
+      "running": "Running",
+      "deleted": "Deleted",
+      "cancelled": "Cancelled",
+      "finished": "Finished",
+      "failed": "Failed",
+      "timeout": "Timeout",
+      "offline": "Offline",
+      "terminated": "Terminated",
+      "unsupported": "Unsupported"
+    },
     "key": {
       "username": "Username",
       "password": "Password",

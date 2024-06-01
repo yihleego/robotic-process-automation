@@ -1,9 +1,7 @@
 package io.leego.rpa.service.impl;
 
 import io.leego.rpa.config.RpaProperties;
-import io.leego.rpa.constant.Constants;
 import io.leego.rpa.entity.App;
-import io.leego.rpa.entity.Dict;
 import io.leego.rpa.entity.QApp;
 import io.leego.rpa.entity.QFunc;
 import io.leego.rpa.entity.QTask;
@@ -187,22 +185,11 @@ public class RpaServiceImpl implements RpaService {
         }
         // user_id -> app_id
         Map<Long, String> userIdAppIdMap = users.stream().collect(Collectors.toMap(User::getId, User::getAppId));
-        // dict_type = task_type:${app_id}
-        List<String> dictTypes = users.stream().map(User::getAppId).distinct().map(o -> Constants.TASK_TYPE_PREFIX + o).collect(Collectors.toList());
-        // app_id -> task_type -> task_priority
-        Map<String, Map<String, String>> appIdTaskTypeMap = dictRepository.findByTypeIn(dictTypes).stream()
-                .collect(Collectors.groupingBy(
-                        o -> o.getType().substring(Constants.TASK_TYPE_PREFIX.length()),
-                        Collectors.mapping(Function.identity(), Collectors.toMap(Dict::getKey, Dict::getValue))));
         // Verify task types
         for (TaskSaveDTO.TaskDTO task : dto.getTasks()) {
             String appId = userIdAppIdMap.get(task.getUserId());
             if (appId == null) {
                 return Result.buildFailure(ErrorCode.APP_ABSENT);
-            }
-            Map<String, String> taskTypeMap = appIdTaskTypeMap.get(appId);
-            if (taskTypeMap == null || !taskTypeMap.containsKey(task.getType())) {
-                return Result.buildFailure(ErrorCode.TASK_TYPE_INVALID);
             }
         }
         List<Task> tasks = dto.getTasks()
@@ -217,10 +204,7 @@ public class RpaServiceImpl implements RpaService {
                         task.setScheduleTime(LocalDateTime.now());
                     }
                     if (task.getPriority() == null) {
-                        String priority = appIdTaskTypeMap.get(appId).get(task.getType());
-                        if (StringUtils.hasText(priority)) {
-                            task.setPriority(Integer.parseInt(priority));
-                        }
+                        task.setPriority(100);
                     }
                     return task;
                 })

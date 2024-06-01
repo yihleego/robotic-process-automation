@@ -36,6 +36,18 @@
       "add_contacts": "添加联系人",
       "post_moments": "发朋友圈"
     },
+    "status": {
+      "created": "已创建",
+      "running": "运行中",
+      "deleted": "已删除",
+      "cancelled": "已取消",
+      "finished": "已完成",
+      "failed": "失败",
+      "timeout": "超时",
+      "offline": "客户端不在线",
+      "terminated": "已终止",
+      "unsupported": "不支持"
+    },
     "key": {
       "username": "用户名",
       "password": "密码",
