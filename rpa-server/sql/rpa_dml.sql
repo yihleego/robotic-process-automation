@@ -37,12 +37,21 @@ values ('wechat', 'login', 'Login', null, 0, 1, now()),
 
 update func
 set param='[{"key":"target","value":null,"name":"Friend","type":"string","required":true},{"key":"messages","value":null,"name":"Messages","type":"array","required":true,"children":[{"key":"type","value":null,"name":"Message Type","type":"radio","required":true,"options":[{"name":"Text","value":"text"},{"name":"Image","value":"image"},{"name":"Video","value":"video"},{"name":"File","value":"file"}]},{"key":"content","value":null,"name":"Content","type":"string","required":true}]}]'
-where name = 'send_private_messages';
+where name = 'send_private_messages'
+  and app_id in ('wechat', 'wecom', 'qq', 'dingtalk', 'lark');
 
 update func
 set param='[{"key":"target","value":null,"name":"Friend","type":"string","required":true},{"key":"messages","value":null,"name":"Messages","type":"array","required":true,"children":[{"key":"type","value":null,"name":"Message Type","type":"radio","required":true,"options":[{"name":"Text","value":"text"},{"name":"Image","value":"image"},{"name":"Video","value":"video"},{"name":"File","value":"file"},{"name":"Mention","value":"mention"}]},{"key":"content","value":null,"name":"Content","type":"string","required":true}]}]'
-where name = 'send_group_messages';
+where name = 'send_group_messages'
+  and app_id in ('wechat', 'wecom', 'qq', 'dingtalk', 'lark');
 
 update func
 set param='[{"key":"contacts","value":null,"name":"Messages","type":"array","required":true,"children":[{"key":"target","value":null,"name":"Mobile/Email","type":"string","required":true},{"key":"reason","value":null,"name":"Reason","type":"string","required":false}]}]'
-where name = 'add_contacts';
+where name = 'add_contacts'
+  and app_id in ('wechat', 'wecom', 'qq', 'dingtalk', 'lark');
+
+update func
+set param='[{"key":"username","value":null,"name":"Username","type":"string","required":true},{"key":"password","value":null,"name":"Password","type":"string","required":true}]'
+where name = 'login'
+  and app_id in ('qq', 'dingtalk', 'lark');
+

@@ -56,6 +56,7 @@
 <script setup>
 import {onMounted, ref, watch} from "vue";
 import {useI18n} from "vue-i18n";
+import {toast} from 'vue3-toastify'
 import TaskDialog from "@/components/TaskDialog.vue";
 import api from "@/api"
 
@@ -129,7 +130,7 @@ const listUsers = () => {
         user.value.total = res.data.total
       })
       .catch((err) => {
-        this.$toast.error(err)
+        toast.error(err)
       })
       .finally(() => {
         user.value.loading = false
