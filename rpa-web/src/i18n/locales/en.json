@@ -12,7 +12,9 @@
     "search": "Search",
     "close": "Close",
     "execute": "Execute",
-    "run": "Run"
+    "run": "Run",
+    "running": "Running",
+    "result": "Result"
   },
   "app": {
     "list": "Apps",

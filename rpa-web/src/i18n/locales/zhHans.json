@@ -12,7 +12,9 @@
     "search": "搜索",
     "close": "关闭",
     "execute": "执行",
-    "run": "运行"
+    "run": "运行",
+    "running": "运行中",
+    "result": "结果"
   },
   "app": {
     "list": "应用列表",

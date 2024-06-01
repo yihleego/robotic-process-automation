@@ -1,86 +1,84 @@
 <template>
-  <v-dialog v-model="model" width="60vw">
-    <v-card v-if="!task.result.created">
-      <v-container>
-        <v-card-title>
-          <span class="text-h5">{{ $t('task.dialog.title') }}</span>
-        </v-card-title>
-        <v-card-text>
-          <v-form>
-            <v-row>
-              <v-col cols="12" md="12">
-                <v-select
-                    v-model="task.params.type"
-                    :items="func.list"
-                    item-title="title"
-                    item-value="name"
-                    :label="$t('task.dialog.type')"
-                    @update:model-value="selectTaskType"
-                    @update:focused="popupTaskType"
-                    variant="outlined"
-                    density="compact"
-                    required>
-                </v-select>
-              </v-col>
-            </v-row>
-            <TaskForm v-model="task.params.data" :definition="func.cur.param"></TaskForm>
-          </v-form>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn variant="outlined" @click="closeTaskDialog">
-            {{ $t('common.close') }}
-          </v-btn>
-          <v-btn variant="outlined" @click="runTask">
-            {{ $t('common.run') }}
-          </v-btn>
-        </v-card-actions>
-      </v-container>
+  <v-dialog v-model="model" width="60vw" @close="closeTaskDialog">
+    <v-card v-if="!task.result.created" class="pa-4">
+      <v-card-title>
+        <span class="text-h5">{{ $t('task.dialog.title') }}</span>
+      </v-card-title>
+      <v-card-text>
+        <v-form>
+          <v-row>
+            <v-col cols="12" md="12">
+              <v-select
+                  v-model="task.params.type"
+                  :items="func.list"
+                  item-title="title"
+                  item-value="name"
+                  :label="$t('task.dialog.type')"
+                  @update:model-value="selectTaskType"
+                  @update:focused="popupTaskType"
+                  variant="outlined"
+                  density="compact"
+                  required>
+              </v-select>
+            </v-col>
+          </v-row>
+          <TaskForm v-model="task.params.data" :definition="func.cur.param"></TaskForm>
+        </v-form>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn variant="outlined" @click="closeTaskDialog">
+          {{ $t('common.close') }}
+        </v-btn>
+        <v-btn variant="outlined" @click="runTask">
+          {{ $t('common.run') }}
+        </v-btn>
+      </v-card-actions>
     </v-card>
 
-    <v-card v-else :loading="task.result.running" class="text-center align-center">
-      <v-container>
-        <v-card-title>
-          <span class="text-h5">{{ task.result.running ? 'Running' : 'Result' }}</span>
-        </v-card-title>
-        <v-card-text>
-          <v-skeleton-loader
-              v-if="task.result.running"
-              width="280px"
-              height="280px"
-              type="card">
-          </v-skeleton-loader>
-          <div v-if="!task.result.running">
-            <v-img
-                v-if="task.result.qrcode"
-                :src="task.result.qrcode"
-                max-width="280px"
-                max-height="280px">
-            </v-img>
-            <p class="text-h5 text--primary">
-              {{ $t(task.result.status) }}
+    <v-card v-else :loading="task.result.running" class="text-center align-center pa-4">
+      <v-card-title>
+        <span class="text-h5">{{ task.result.running ? $t('common.running') : $t('common.result') }}</span>
+      </v-card-title>
+      <v-card-text class="text-center align-center">
+        <v-skeleton-loader
+            v-if="task.result.running"
+            width="280px"
+            height="280px"
+            type="card">
+        </v-skeleton-loader>
+        <div v-else>
+          <v-img
+              v-if="task.result.qrcode"
+              :src="task.result.qrcode"
+              max-width="280px"
+              max-height="280px">
+          </v-img>
+          <p class="text-h5 text--primary">
+            {{ $t(task.result.status) }}
+          </p>
+          <p class="text--primary pt-2" v-if="task.result.message">
+            {{ task.result.message }}
+          </p>
+          <p class="text--primary pt-2" v-if="task.result.result">
+            <p v-for="(v, k) in task.result.result">
+              {{ k }}: {{ v }}
             </p>
-            <p class="text--primary" v-if="task.result.message">
-              {{ task.result.message }}
-            </p>
-            <p class="text--primary">
-              {{ task.result.result }}
-            </p>
-          </div>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn @click="closeTaskDialog">
-            {{ $t('common.close') }}
-          </v-btn>
-        </v-card-actions>
-      </v-container>
+          </p>
+        </div>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn variant="outlined" @click="closeTaskDialog">
+          {{ $t('common.close') }}
+        </v-btn>
+      </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
 <script setup>
-import {onMounted, reactive} from "vue";
+import {onMounted, reactive, watch} from "vue";
 import {useI18n} from "vue-i18n";
 import {toast} from 'vue3-toastify'
 import TaskForm from "@/components/TaskForm.vue";
@@ -144,8 +142,8 @@ const popupTaskType = () => {
 }
 
 const selectTaskType = (type) => {
-  console.log('selectTaskType', type)
-  func.cur = func.list.filter(o => o.appId === props.app.id && o.name === type)[0]
+  console.log('selectTaskType', type, task, func)
+  func.cur = {...func.list.filter(o => o.appId === props.app.id && o.name === type)[0]}
   task.params.data = {}
 }
 
@@ -199,11 +197,12 @@ const showTaskResult = (taskId) => {
     api.getTask(taskId)
         .then((res) => {
           result.retries++
-          result.type = res.data.type
-          result.status = res.data.status
-          result.message = res.data.message
           result.result = res.data.result
-          if (result.status === Status.CREATED.code || result.status === Status.RUNNING.code) {
+          result.message = res.data.message
+          result.status = Object.values(Status).filter(o => o.code === res.data.status).map(o => o.desc)[0]
+
+          const status = res.data.status
+          if (status === Status.CREATED.code || status === Status.RUNNING.code) {
             console.log('waiting', task)
             if (result.retries > 60) {
               result.message = 'Timeout'
@@ -212,9 +211,9 @@ const showTaskResult = (taskId) => {
             return
           }
 
-          if (result.status === Status.DELETED.code || result.status === Status.CANCELLED.code) {
+          if (status === Status.DELETED.code || status === Status.CANCELLED.code) {
             toast.warning('Task has been cancelled')
-          } else if (result.status === Status.FINISHED.code) {
+          } else if (status === Status.FINISHED.code) {
             result.success = true
           } else {
             result.success = false
@@ -238,8 +237,12 @@ const showTaskResult = (taskId) => {
 }
 
 const closeTaskDialog = () => {
-  if (task.result.job) {
-    clearInterval(task.result.job)
+  task.params = {
+    userId: null,
+    type: null,
+    priority: null,
+    data: {},
+    scheduleTime: null,
   }
   task.result = {
     created: false,
@@ -247,6 +250,10 @@ const closeTaskDialog = () => {
     qrcode: null,
     message: null,
     job: null,
+  }
+  func.cur = {}
+  if (task.result.job) {
+    clearInterval(task.result.job)
   }
   model.value = false
 }

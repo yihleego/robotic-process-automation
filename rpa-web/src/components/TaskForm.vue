@@ -29,7 +29,7 @@ const props = defineProps({
 const form = ref([])
 
 watch(() => props.definition, (newValue, oldValue) => {
-  // console.log('definition changed', newValue, oldValue)
+  console.log('definition changed', newValue, oldValue)
   form.value = props.definition ? JSON.parse(props.definition) : []
 })
 
@@ -49,6 +49,6 @@ watch(() => form, (newValue, oldValue) => {
     return data
   }
   model.value = convert(form.value)
-  // console.log('form changed', newValue, oldValue, model.value)
+  console.log('form changed', newValue, oldValue, model.value)
 }, {deep: true})
 </script>
