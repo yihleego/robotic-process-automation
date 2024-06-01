@@ -54,7 +54,7 @@
 </template>
 
 <script setup>
-import {onMounted, ref, watch} from "vue";
+import {onMounted, reactive, ref, watch} from "vue";
 import {useI18n} from "vue-i18n";
 import {toast} from 'vue3-toastify'
 import TaskDialog from "@/components/TaskDialog.vue";
@@ -69,7 +69,7 @@ const props = defineProps({
   }
 })
 
-const user = ref({
+const user = reactive({
   list: [],
   total: 0,
   query: {
@@ -111,6 +111,18 @@ const task = ref({
   visible: false,
 })
 
+onMounted(() => {
+  user.headers.forEach(o => o.title = t(`user.${o.key}`))
+})
+
+watch(locale, () => {
+  user.headers.forEach(o => o.title = t(`user.${o.key}`))
+})
+
+watch(() => props.app, () => {
+  listUsers()
+})
+
 const listUsers = () => {
   const app = props.app
   if (!app) {
@@ -118,22 +130,22 @@ const listUsers = () => {
   }
   let params = {
     appIds: app.id,
-    page: user.value.options.page,
-    size: user.value.options.itemsPerPage,
-    sort: user.value.options.sortBy.map(o => `${o.key}:${o.order}`).join(','),
-    ...user.value.query
+    page: user.options.page,
+    size: user.options.itemsPerPage,
+    sort: user.options.sortBy.map(o => `${o.key}:${o.order}`).join(','),
+    ...user.query
   }
-  user.value.loading = true
+  user.loading = true
   api.listUsers(params)
       .then((res) => {
-        user.value.list = res.data.list
-        user.value.total = res.data.total
+        user.list = res.data.list
+        user.total = res.data.total
       })
       .catch((err) => {
         toast.error(err)
       })
       .finally(() => {
-        user.value.loading = false
+        user.loading = false
       })
 }
 
@@ -144,16 +156,4 @@ const popupTask = (user) => {
     visible: true,
   }
 }
-
-onMounted(() => {
-  user.value.headers.forEach(o => o.title = t(`user.${o.key}`))
-})
-
-watch(() => props.app, () => {
-  listUsers()
-})
-
-watch(locale, () => {
-  user.value.headers.forEach(o => o.title = t(`user.${o.key}`))
-})
 </script>
