@@ -19,7 +19,7 @@
       v-else-if="model.type === 'select'"
       v-model="model.value"
       :items="model.options"
-      item-title="name"
+      item-title="title"
       item-value="value"
       :label="$t(`task.key.${model.key}`)"
       :required="model.required"
@@ -31,7 +31,7 @@
       multiple
       v-model="model.value"
       :items="model.options"
-      item-title="name"
+      item-title="title"
       item-value="value"
       :label="$t(`task.key.${model.key}`)"
       :required="model.required"
@@ -75,6 +75,7 @@ const addLine = () => {
   if (!model.value.value) {
     model.value.value = []
   }
+  // children are templates, deep copy them to value
   model.value.value.push(JSON.parse(JSON.stringify(model.value.children)))
 }
 
@@ -87,12 +88,16 @@ const delLine = (item) => {
 }
 
 if (model.value.type === 'array') {
+  // add one default line if it is an array and empty
   if (!model.value.value) {
     model.value.value = []
   }
   if (model.value.value.length === 0) {
     addLine()
   }
+} else if (model.value.type === 'select' || model.value.type === 'multiple') {
+  // translate options
+  model.value.options.forEach(o => o.title = t(`task.key.${o.value}`))
 }
 </script>
 
