@@ -1,6 +1,8 @@
 import logging
+import os
 from datetime import datetime
 
+import pyperclip
 from pywinauto.findwindows import find_elements
 from pyzbar import pyzbar
 
@@ -148,12 +150,8 @@ class WeChat(UiaApp):
             if type == MessageType.TEXT:
                 input_box.type_keys(content, with_spaces=True, with_tabs=True, with_newlines=True)
             elif type == MessageType.IMAGE or type == MessageType.VIDEO or type == MessageType.FILE:
-                self.copy(file_paths[content])
-                file_button = wechat_window.child_window(control_type='Button', title='发送文件')
-                file_button.click_input()
-                file_name_edit = wechat_window.child_window(control_type='Edit', title='文件名(N):')
-                file_name_edit.type_keys('^a^v')
-                file_name_edit.type_keys('{ENTER}')
+                self.copy_file(file_paths[content])
+                input_box.type_keys("^v")
             elif type == MessageType.MENTION:
                 input_box.type_keys('@')
                 input_box.type_keys(content, with_spaces=True, with_tabs=True, with_newlines=True)

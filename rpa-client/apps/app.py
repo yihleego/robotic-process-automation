@@ -9,19 +9,20 @@ from datetime import datetime
 from urllib.parse import quote
 from urllib.request import urlopen
 
+import airtest.core.api
+import airtest.core.win
 import psutil
 import pyperclip
 import win32con
 import win32gui
 import win32process
 from PIL import ImageGrab
+from airtest.core.cv import Template
 from pywinauto.application import Application
 from pywinauto.controls.hwndwrapper import HwndWrapper
 from pywinauto.findwindows import find_elements
+from pywinauto.keyboard import send_keys
 
-import airtest.core.api
-import airtest.core.win
-from airtest.core.cv import Template
 from handler import handler
 
 
@@ -269,6 +270,9 @@ class Capable:
     def paste(self):
         return pyperclip.paste()
 
+    def copy_file(self, path):
+        os.system(f"powershell Set-Clipboard -LiteralPath {path}")
+
     def wait(self, seconds=0):
         if seconds > 0:
             time.sleep(seconds)
@@ -288,6 +292,10 @@ class UiaApp(App, Capable):
         app = Application(backend=backend)
         app.connect(handle=handle)
         return app
+
+    def key(self, key, wait_time=0):
+        time.sleep(wait_time)
+        send_keys(key)
 
 
 class AirApp(App, Capable):
