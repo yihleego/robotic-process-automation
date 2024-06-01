@@ -33,6 +33,10 @@ const app = ref({
   total: 0,
 })
 
+onMounted(() => {
+  listApps()
+})
+
 const selectApp = (app) => {
   cur.value = app
   emit('update', app)
@@ -57,8 +61,4 @@ const listApps = () => {
         toast.error(err)
       })
 }
-
-onMounted(() => {
-  listApps()
-})
 </script>
