@@ -11,7 +11,7 @@
               <v-col cols="12" md="12">
                 <v-select
                     v-model="task.params.type"
-                    :items="funcs.filter(o => o.appId === app.id)"
+                    :items="func.list"
                     item-title="title"
                     item-value="name"
                     :label="$t('task.form.type')"
@@ -23,10 +23,7 @@
                 </v-select>
               </v-col>
             </v-row>
-            <MessageBox v-if="task.params.type === 'send_private_messages'" mode="private" @update:data="task.params.data = $event">
-            </MessageBox>
-            <MessageBox v-else-if="task.params.type === 'send_group_messages'" mode="group" @update:data="task.params.data = $event">
-            </MessageBox>
+            <TaskForm v-model="task.params.data" :definition="func.cur"></TaskForm>
           </v-container>
         </v-form>
       </v-card-text>
@@ -71,7 +68,7 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn @click="internalVisible = false; closeTaskResult()">
+        <v-btn @click="closeTaskResult">
           {{ $t('common.close') }}
         </v-btn>
       </v-card-actions>
@@ -80,15 +77,18 @@
 </template>
 
 <script setup>
-import {onMounted, ref} from "vue";
+import {onMounted, reactive} from "vue";
 import {useI18n} from "vue-i18n";
 import {toast} from 'vue3-toastify'
-import MessageBox from "@/components/MessageBox.vue"
+import TaskForm from "@/components/TaskForm.vue";
 import api from "@/api"
 
 const {t, locale} = useI18n()
 
-const model = defineModel()
+const model = defineModel({
+  type: Boolean,
+  default: false,
+})
 
 const props = defineProps({
   app: {
@@ -101,7 +101,7 @@ const props = defineProps({
   },
 })
 
-const task = ref({
+const task = reactive({
   valid: false,
   params: {
     userId: null,
@@ -115,57 +115,47 @@ const task = ref({
     running: false,
     qrcode: null,
     message: null,
+    retries: 0,
     job: null,
   }
 })
 
-const configs = ref([
-  {
-    key: "login",
-    code: "login",
-    name: "Login",
-    priority: 0,
-  },
-  {
-    key: "logout",
-    code: "logout",
-    name: "Logout",
-    priority: 1,
-  },
-  {
-    key: "sendPrivateMessages",
-    code: "send_private_messages",
-    name: "Send Private Messages",
-    priority: 100,
-  },
-  {
-    key: "sendGroupMessages",
-    code: "send_group_messages",
-    name: "Send Group Messages",
-    priority: 100,
-  }
-])
+const func = reactive({
+  cur: null,
+  all: [],
+  list: [],
+})
 
-const funcs = ref([])
+onMounted(() => {
+  api.listFuncs()
+      .then((res) => {
+        func.all = res.data
+      })
+      .catch((err) => {
+        toast.error(err)
+      })
+})
 
 const popupTaskType = () => {
-  // configs.value.forEach(o => o.name = t(`task.type.${o.key}`))
-  funcs.value.forEach(o => o.title = t(`task.type.${o.name}`))
+  func.list = func.all.filter(o => o.appId === props.app.id)
+  func.list.forEach(o => o.title = t(`task.type.${o.name}`));
 }
 
 const selectTaskType = (type) => {
   console.log('selectTaskType', type)
+  func.cur = func.list.filter(o => o.appId === props.app.id && o.name === type)[0]
+  task.params.data = {}
 }
 
 const runTask = () => {
-  task.value.params.appId = props.app.id
-  task.value.params.userId = props.user.id
-  task.value.params.data = JSON.stringify(task.value.params.data)
-  console.log('runTask', task.value.params)
-  api.createTasks({tasks: [task.value.params]})
+  task.params.appId = props.app.id
+  task.params.userId = props.user.id
+  task.params.data = JSON.stringify(task.params.data)
+  console.log('runTask', task.params)
+  api.createTasks({tasks: [task.params]})
       .then((res) => {
         let task = res.data[0]
-        task.value.result = task
+        task.result = task
         showTaskResult(task.id)
       })
       .catch((err) => {
@@ -174,63 +164,63 @@ const runTask = () => {
 }
 
 const showTaskResult = (taskId) => {
-  task.value.result.created = true
-  task.value.result.running = true
-  task.value.result.qrcode = null
-  task.value.result.retries = 0
-  task.value.result.job = setInterval(() => {
+  task.result.created = true
+  task.result.running = true
+  task.result.qrcode = null
+  task.result.retries = 0
+  task.result.job = setInterval(() => {
     api.getTask(taskId)
         .then((res) => {
-          task.value.result.retries++
-          let task = res.data
+          task.result.retries = task.result.retries + 1
+          /*let task = res.data
           let taskType = task.type
           let taskStatus = task.status
           let taskMessage = task.message
-          let taskResult = task.result
-          if (taskStatus === 0 || taskStatus === 1) {
+          let taskResult = task.result*/
+          if (task.status === 0 || task.status === 1) {
             // Created, Running
             console.log('Waiting', task)
-            if (task.value.result.retries > 60) {
-              task.value.result.running = false
-              task.value.result.message = 'Timeout'
-              clearInterval(task.value.result.job)
+            if (task.result.retries > 60) {
+              task.result.running = false
+              task.result.message = 'Timeout'
+              clearInterval(task.result.job)
             }
             return
           }
-          if (taskStatus === 2 || taskStatus === 3) {
+          if (task.status === 2 || task.status === 3) {
             // Deleted, Cancelled
             toast.warning('Task has been cancelled')
-          } else if (taskStatus === 10) {
-            task.value.result.success = true
+          } else if (task.status === 10) {
+            task.result.success = true
           } else {
-            task.value.result.success = false
-            toast.error('Failed to obtain QR code ' + taskMessage)
+            task.result.success = false
+            toast.error('Failed to obtain QR code ' + task.message)
           }
-          task.value.result.running = false
-          task.value.result.status = taskStatus
-          task.value.result.message = taskMessage
-          task.value.result.result = null
-          if (taskResult && this.isJSON(taskResult)) {
-            let r = JSON.parse(taskResult)
-            task.value.result.result = r
-            if (taskType === 'login' && r.qrcode) {
-              task.value.result.qrcode = createQRCode(r.qrcode, {size: 256})
+          task.result.running = false
+          task.result.status = task.status
+          task.result.message = task.message
+          task.result.result = null
+          if (task.result && this.isJSON(task.result)) {
+            let r = JSON.parse(task.result)
+            task.result.result = r
+            if (task.type === 'login' && r.qrcode) {
+              task.result.qrcode = createQRCode(r.qrcode, {size: 256})
             }
           }
-          clearInterval(task.value.result.job)
+          clearInterval(task.result.job)
         })
         .catch((err) => {
           toast.error(err)
-          clearInterval(task.value.result.job)
+          clearInterval(task.result.job)
         })
   }, 1000)
 }
 
 const closeTaskResult = () => {
-  if (task.value.result.job) {
-    clearInterval(task.value.result.job)
+  if (task.result.job) {
+    clearInterval(task.result.job)
   }
-  task.value.result = {
+  task.result = {
     created: false,
     running: false,
     qrcode: null,
@@ -267,14 +257,4 @@ const createQRCode = (text, options) => {
   let margin = (size - moduleCount * cellSize) / 2
   return qr.createDataURL(cellSize, margin, size)
 }
-
-onMounted(() => {
-  api.listFuncs()
-      .then((res) => {
-        funcs.value = res.data
-      })
-      .catch((err) => {
-        toast.error(err)
-      })
-})
 </script>

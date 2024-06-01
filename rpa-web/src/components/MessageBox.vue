@@ -52,7 +52,6 @@
 </template>
 
 <script>
-import {watch} from "vue";
 
 export default {
   props: {
@@ -79,11 +78,13 @@ export default {
     if (this.$props.mode === 'group') {
       this.types.push({value: "mention", name: "Mention"})
     }
-    watch(this.data, (newValue) => {
-      this.$emit('update:data', newValue);
-    });
     this.addLine()
     this.popupMessageType()
+  },
+  watch: {
+    data(newValue, oldValue) {
+      this.$emit('update:data', newValue)
+    },
   },
   methods: {
     addLine() {
