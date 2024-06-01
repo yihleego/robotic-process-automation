@@ -11,7 +11,8 @@
   "common": {
     "search": "Search",
     "close": "Close",
-    "execute": "Execute"
+    "execute": "Execute",
+    "run": "Run"
   },
   "app": {
     "list": "Apps",
@@ -22,7 +23,7 @@
     "lark": "Lark"
   },
   "task": {
-    "form": {
+    "dialog": {
       "title": "Run task",
       "type": "Type",
       "data": "Data"
@@ -35,17 +36,17 @@
       "add_contacts": "Add Contacts",
       "post_moments": "Post Moments"
     },
-    "message": {
+    "key": {
+      "username": "Username",
+      "password": "Password",
       "target": "Recipient",
       "content": "Content",
       "type": "Type",
-      "types": {
-        "text": "Text",
-        "image": "Image",
-        "video": "Video",
-        "file": "File",
-        "mention": "Mention"
-      }
+      "text": "Text",
+      "image": "Image",
+      "video": "Video",
+      "file": "File",
+      "mention": "Mention"
     }
   },
   "user": {

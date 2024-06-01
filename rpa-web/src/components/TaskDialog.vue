@@ -2,7 +2,7 @@
   <v-dialog v-model="model" width="60vw">
     <v-card v-if="!task.result.created">
       <v-card-title>
-        <span class="text-h5">{{ $t('task.form.title') }}</span>
+        <span class="text-h5">{{ $t('task.dialog.title') }}</span>
       </v-card-title>
       <v-card-text>
         <v-form v-model="task.valid">
@@ -14,7 +14,7 @@
                     :items="func.list"
                     item-title="title"
                     item-value="name"
-                    :label="$t('task.form.type')"
+                    :label="$t('task.dialog.type')"
                     @update:model-value="selectTaskType"
                     @update:focused="popupTaskType"
                     variant="outlined"
@@ -23,17 +23,18 @@
                 </v-select>
               </v-col>
             </v-row>
-            <TaskForm v-model="task.params.data" :definition="func.cur"></TaskForm>
+            <TaskForm v-model="task.params.data" :definition="func.cur.param"></TaskForm>
           </v-container>
         </v-form>
       </v-card-text>
       <v-card-actions>
+        {{task.params}}
         <v-spacer></v-spacer>
         <v-btn variant="outlined" @click="model=false">
           {{ $t('common.close') }}
         </v-btn>
         <v-btn variant="outlined" :disabled="!task.valid" @click="runTask">
-          {{ $t('common.execute') }}
+          {{ $t('common.run') }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -121,7 +122,7 @@ const task = reactive({
 })
 
 const func = reactive({
-  cur: null,
+  cur: {},
   all: [],
   list: [],
 })

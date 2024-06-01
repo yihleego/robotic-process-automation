@@ -11,7 +11,8 @@
   "common": {
     "search": "搜索",
     "close": "关闭",
-    "execute": "执行"
+    "execute": "执行",
+    "run": "运行"
   },
   "app": {
     "list": "应用列表",
@@ -22,7 +23,7 @@
     "lark": "飞书"
   },
   "task": {
-    "form": {
+    "dialog": {
       "title": "运行任务",
       "type": "任务类型",
       "data": "任务数据"
@@ -35,17 +36,17 @@
       "add_contacts": "添加联系人",
       "post_moments": "发朋友圈"
     },
-    "message": {
+    "key": {
+      "username": "用户名",
+      "password": "密码",
       "target": "接收人",
       "content": "消息内容",
       "type": "消息类型",
-      "types": {
-        "text": "文本",
-        "image": "图片",
-        "video": "视频",
-        "file": "文件",
-        "mention": "提醒"
-      }
+      "text": "文本",
+      "image": "图片",
+      "video": "视频",
+      "file": "文件",
+      "mention": "提醒"
     }
   },
   "user": {
