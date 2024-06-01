@@ -14,7 +14,8 @@ class DingTalk(UiaApp):
             process_name="DingTalk.exe",
             mutex_names=[r"\{{239B7D43-86D5-4E5C-ADE6-CEC42155B475}}DingTalk", r"\{{239B7D43-86D5-4E5C-ADE6-CEC42155B475}}DingTalk_loginframe"],
             registry_path=r"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\钉钉",
-            registry_key="UninstallString")
+            registry_key="UninstallString",
+            registry_key_mapper=lambda x: x.replace("uninst.exe", "DingtalkLauncher.exe"))
 
     def find_userinfo(self):
         return

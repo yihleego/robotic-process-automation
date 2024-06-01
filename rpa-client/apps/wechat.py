@@ -1,8 +1,6 @@
 import logging
-import os
 from datetime import datetime
 
-import pyperclip
 from pywinauto.findwindows import find_elements
 from pyzbar import pyzbar
 
@@ -12,7 +10,7 @@ from apps.app import UiaApp, AppConfig, AppUser, MessageType
 class WeChat(UiaApp):
     def __init__(self, handle: int, process: int = None, status: int = None, user=None):
         super().__init__(handle, process, status, user)
-        self.version = "3.5.0.46"
+        self.version = "3.9.10.27"
 
     @staticmethod
     def config():

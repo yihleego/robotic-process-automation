@@ -56,7 +56,7 @@ class MessageType:
 
 
 class AppConfig:
-    def __init__(self, app_name, login_class_name, main_class_name, process_name, mutex_names, registry_path, registry_key):
+    def __init__(self, app_name, login_class_name, main_class_name, process_name, mutex_names, registry_path, registry_key, registry_key_mapper=None):
         self.app_name = app_name
         self.login_class_name = login_class_name
         self.main_class_name = main_class_name
@@ -64,6 +64,7 @@ class AppConfig:
         self.mutex_names = mutex_names
         self.registry_path = registry_path
         self.registry_key = registry_key
+        self.registry_key_mapper = registry_key_mapper
 
     def __str__(self) -> str:
         return f"app_name: {self.app_name}, " \
@@ -136,7 +137,11 @@ class App(ABC):
         elif config.registry_path and config.registry_key:
             # Find path from registry
             sub_key = winreg.OpenKeyEx(winreg.HKEY_LOCAL_MACHINE, config.registry_path)
-            values = winreg.QueryValueEx(sub_key, config.registry_key)
+            if config.registry_key_mapper:
+                registry_key = config.registry_key_mapper(config.registry_key)
+            else:
+                registry_key = config.registry_key
+            values = winreg.QueryValueEx(sub_key, registry_key)
             if values and values[0]:
                 tmp = values[0].strip()
                 if tmp.startswith('\"') or tmp.startswith('\''):
