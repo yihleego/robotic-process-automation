@@ -9,6 +9,7 @@
     "issues": "Issues"
   },
   "common": {
+    "add": "Add",
     "search": "Search",
     "close": "Close",
     "execute": "Execute",
@@ -18,6 +19,8 @@
   },
   "app": {
     "list": "Apps",
+    "name": "Name",
+    "logo": "Logo",
     "wechat": "WeChat",
     "wecom": "WeCom",
     "qq": "QQ",

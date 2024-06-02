@@ -9,6 +9,7 @@
     "issues": "错误报告"
   },
   "common": {
+    "add": "新建",
     "search": "搜索",
     "close": "关闭",
     "execute": "执行",
@@ -18,6 +19,8 @@
   },
   "app": {
     "list": "应用列表",
+    "name": "应用名称",
+    "logo": "应用图标",
     "wechat": "微信",
     "wecom": "企业微信",
     "qq": "腾讯QQ",
