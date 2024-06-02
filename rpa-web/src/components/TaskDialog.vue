@@ -40,32 +40,34 @@
       <v-card-title>
         <span class="text-h5">{{ task.result.running ? $t('common.running') : $t('common.result') }}</span>
       </v-card-title>
-      <v-card-text class="text-center align-center">
+      <v-card-text class="d-flex justify-center">
         <v-skeleton-loader
-            v-if="task.result.running"
+            :loading="task.result.running"
             width="280px"
             height="280px"
-            type="card">
-        </v-skeleton-loader>
-        <div v-else>
-          <v-img
-              v-if="task.result.qrcode"
-              :src="task.result.qrcode"
-              max-width="280px"
-              max-height="280px">
-          </v-img>
+            type="card"
+        >
+          <v-responsive>
           <p class="text-h5 text--primary">
             {{ $t(task.result.status) }}
           </p>
           <p class="text--primary pt-2" v-if="task.result.message">
             {{ task.result.message }}
           </p>
+          <img
+              v-if="task.result.qrcode"
+              :src="task.result.qrcode"
+              width="280px"
+              height="280px"
+              class="block"
+          />
           <p class="text--primary pt-2" v-if="task.result.result">
             <p v-for="(v, k) in task.result.result">
               {{ k }}: {{ v }}
             </p>
           </p>
-        </div>
+          </v-responsive>
+        </v-skeleton-loader>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
@@ -78,11 +80,12 @@
 </template>
 
 <script setup>
-import {onMounted, reactive, watch} from "vue";
+import {onMounted, reactive} from "vue";
 import {useI18n} from "vue-i18n";
 import {toast} from 'vue3-toastify'
 import TaskForm from "@/components/TaskForm.vue";
 import api from "@/api"
+import QRCode from 'qrcode'
 
 const {t, locale} = useI18n()
 
@@ -223,7 +226,14 @@ const showTaskResult = (taskId) => {
           if (result.result && isJSON(result.result)) {
             result.result = JSON.parse(result.result)
             if (result.result.qrcode) {
-              result.qrcode = createQRCode(result.result.qrcode, {size: 256})
+              QRCode.toDataURL(result.result.qrcode)
+                  .then(url => {
+                    console.log(url)
+                    result.qrcode = url
+                  })
+                  .catch(err => {
+                    console.error(err)
+                  })
             }
           }
 
